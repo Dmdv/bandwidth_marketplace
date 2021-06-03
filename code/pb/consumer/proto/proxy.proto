@@ -1,0 +1,24 @@
+syntax = "proto3";
+package zchain.pb.consumer;
+
+option go_package = "github.com/MurashovVen/bandwidth-marketplace/code/pb/consumer";
+
+service Proxy {
+  rpc NotifyNewProvider (NotifyNewProviderRequest) returns (ChangeProviderResponse);
+}
+
+message NotifyNewProviderRequest {
+  string sessID = 1;
+  string userID = 2;
+  string providerID = 3;
+  string accessPointID = 4;
+}
+
+message ChangeProviderResponse {
+  ChangeStatus Status = 1;
+}
+
+enum ChangeStatus {
+  Failed = 0;
+  Success = 1;
+}

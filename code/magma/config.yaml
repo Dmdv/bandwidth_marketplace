@@ -1,0 +1,16 @@
+port: 8095
+
+grpc_port: 8081
+
+logging:
+  level: "info"
+  dir: "./log"
+
+
+handler:
+  rate_limit: 10 # per second
+
+consumer:
+  hss:
+    address: ":7031"
+

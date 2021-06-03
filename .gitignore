@@ -1,0 +1,6 @@
+.idea/
+.vscode/
+docker.local/consumer*/
+docker.local/provider*/
+
+code/magma/log/

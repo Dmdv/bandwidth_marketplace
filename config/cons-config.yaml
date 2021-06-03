@@ -1,0 +1,35 @@
+server_chain:
+  id: ""
+  owner_id: ""
+  signature_scheme: "bls0chain"
+  block_worker: http://198.18.0.98:9091
+
+handler:
+  # per second
+  rate_limit: 10
+
+db:
+  name: consumer_meta
+  user: consumer_user
+  password: consumer
+  host: postgres
+  port: 5432
+
+logging:
+  level: "info"
+
+magma_address: ":8085"
+
+hss:
+  users: [
+      "3d8b2c47542404b0059a4c320dca873645d0a3259532a8e17e4cd10db2ef2012b0ba6ef46c5dffab0bb43c05cfc3da7004adf5fe5497e339b298f742fa9843a3",
+          "user2",
+  ]
+
+proxy:
+  terms:
+    max_price: 5  # token per MB
+    qos:
+      # megabits per second
+      min_download_bmps: 10
+      min_upload_bmps: 10

@@ -1,0 +1,56 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:11
+    environment:
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - ./provider${PROVIDER}/data/postgresql:/var/lib/postgresql/data
+    networks:
+      default:
+  postgres-post:
+    image: postgres:11
+    environment:
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: postgres
+    volumes:
+      - ../bin:/provider/bin
+      - ../sql/provider:/provider/sql
+    command: bash /provider/bin/prov-postgres-entrypoint.sh
+    links:
+      - postgres:postgres
+
+  provider:
+    image: provider
+    environment:
+      - DOCKER= true
+    volumes:
+      - ../config:/provider/config
+      - ./provider${PROVIDER}/files:/provider/files
+      - ./provider${PROVIDER}/data:/provider/data
+      - ./provider${PROVIDER}/log:/provider/log
+      - ./keys_config/provider:/provider/keys_config/provider
+      - ./provider${PROVIDER}/data/tmp:/tmp
+    ports:
+      - "507${PROVIDER}:507${PROVIDER}"
+      - "704${PROVIDER}:704${PROVIDER}"
+    command: ./bin/provider --port 507${PROVIDER} --grpc_port 704${PROVIDER} --hostname localhost --deployment_mode 0 --keys_file keys_config/provider/b0pnode${PROVIDER}_keys.txt --log_dir /provider/log --db_dir /provider/data
+    networks:
+      default:
+      testnet0:
+        ipv4_address: 198.18.0.10${PROVIDER}
+
+networks:
+  default:
+    driver: bridge
+  testnet0:
+    external: true
+
+volumes:
+  data:
+  config:
+  bin:

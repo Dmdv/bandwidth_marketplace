@@ -1,0 +1,29 @@
+syntax = "proto3";
+package zchain.pb.consumer;
+
+option go_package = "github.com/MurashovVen/bandwidth-marketplace/code/pb/consumer";
+
+service HSS {
+  rpc VerifyUser (VerifyUserRequest) returns (VerifyUserResponse);
+}
+
+message VerifyUserRequest {
+  string userID = 1;
+  Auth auth = 2;
+}
+
+message Auth {
+  // timestamp represented in UNIX format.
+  string creationDate = 1;
+  string signatureScheme = 2;
+  string signature = 3;
+}
+
+message VerifyUserResponse {
+  VerificationStatus status = 1;
+}
+
+enum VerificationStatus {
+  Unverified = 0;
+  Verified = 1;
+}

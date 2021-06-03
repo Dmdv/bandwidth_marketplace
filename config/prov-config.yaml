@@ -1,0 +1,27 @@
+server_chain:
+  id: ""
+  owner_id: ""
+  signature_scheme: "bls0chain"
+  block_worker: http://198.18.0.98:9091
+
+handler:
+  # per second
+  rate_limit: 10
+
+db:
+  name: provider_meta
+  user: provider_user
+  password: provider
+  host: postgres
+  port: 5432
+
+logging:
+  level: "info"
+
+Terms:
+  # token per megabyte
+  price: 1
+  qos:
+    # megabits per second
+    download_mbps: 10
+    upload_mbps: 10

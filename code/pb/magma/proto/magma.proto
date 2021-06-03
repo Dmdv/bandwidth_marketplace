@@ -1,0 +1,27 @@
+syntax = "proto3";
+package zchain.pb.magma;
+
+import "pb/consumer/proto/hss.proto";
+
+option go_package = "github.com/MurashovVen/bandwidth-marketplace/code/pb/magma";
+
+service Magma {
+  rpc Connect (ConnectRequest) returns (ConnectResponse);
+}
+
+message ConnectRequest {
+  string userID = 1;
+  string consumerID = 2;
+  string providerID = 3;
+  string accessPointID =5;
+  consumer.Auth auth = 6;
+}
+
+message ConnectResponse {
+  Status status = 1;
+}
+
+enum Status {
+  Failed = 0;
+  Connected = 1;
+}
