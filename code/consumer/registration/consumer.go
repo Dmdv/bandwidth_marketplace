@@ -51,6 +51,7 @@ func RegisterWithRetries(numTries int) {
 	for ind < numTries && !registered {
 		registered, _ = isConsumerRegistered()
 		if registered {
+			log.Logger.Info("Consumer is already registered in blockchain")
 			break
 		}
 
@@ -76,7 +77,7 @@ func RegisterWithRetries(numTries int) {
 		errors.ExitErr("error while registering consumer: %v\n", err, 2)
 	}
 
-	log.Logger.Info("Node is registered as Magma Provider in blockchain")
+	log.Logger.Info("Node is registered as Magma Consumer in blockchain", zap.String("ID", node.GetSelfNode().ID()))
 }
 
 // walletCallback provides callback struct for operations with wallet.

@@ -53,7 +53,7 @@ func RegisterWithRetries(numTries int, cfg config.Terms) {
 	for ind < numTries && !registered {
 		registered, _ = isProviderRegistered()
 		if registered {
-			log.Logger.Info("Provider already registered")
+			log.Logger.Info("Provider already registered in blockchain")
 			break
 		}
 
