@@ -4,8 +4,8 @@ import (
 	"flag"
 	"os"
 
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/errors"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/provider"
+	"github.com/0chain/bandwidth_marketplace/code/core/errors"
+	"github.com/0chain/bandwidth_marketplace/code/core/provider"
 	"gopkg.in/yaml.v2"
 )
 

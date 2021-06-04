@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/0chain/bandwidth_marketplace/code/core/crypto"
+	"github.com/0chain/bandwidth_marketplace/code/pb/consumer"
+	"github.com/0chain/bandwidth_marketplace/code/pb/magma"
 	"github.com/0chain/gosdk/core/zcncrypto"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/crypto"
-	"github.com/MurashovVen/bandwidth-marketplace/code/pb/consumer"
-	"github.com/MurashovVen/bandwidth-marketplace/code/pb/magma"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 )

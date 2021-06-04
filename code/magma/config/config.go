@@ -3,7 +3,7 @@ package config
 import (
 	"os"
 
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/errors"
+	"github.com/0chain/bandwidth_marketplace/code/core/errors"
 	"gopkg.in/yaml.v2"
 )
 

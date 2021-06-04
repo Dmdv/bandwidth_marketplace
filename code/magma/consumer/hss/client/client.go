@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/MurashovVen/bandwidth-marketplace/code/pb/consumer"
+	"github.com/0chain/bandwidth_marketplace/code/pb/consumer"
 	"google.golang.org/grpc"
 )
 

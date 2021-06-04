@@ -1,6 +1,10 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0 h1:eOI3/cP2VTU6uZLDYAoic+eyzzB9YyGmJ7eIjl8rOPg=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+github.com/0chain/bandwidth_marketplace/code/core v0.0.0-20210604072009-adc49b62ee72 h1:eepWlL+wtJTMaWR0IElAq9Q3lCuCnELrAAKGTp7iQog=
+github.com/0chain/bandwidth_marketplace/code/core v0.0.0-20210604072009-adc49b62ee72/go.mod h1:cu+qSIZYNQ2rcScA+xXamnSFK19HBaEbVmlrV/K9bns=
+github.com/0chain/bandwidth_marketplace/code/pb v0.0.0-20210604072009-adc49b62ee72 h1:O9CdJOdGB4v42S8l+IQqcwSrt3yszR4PkRo+2h8UGtI=
+github.com/0chain/bandwidth_marketplace/code/pb v0.0.0-20210604072009-adc49b62ee72/go.mod h1:h14ab+YGQXD725gdI/Hj2MthgGqY3jLqCA4Ruu345Uw=
 github.com/0chain/gosdk v1.2.6 h1:824qUcItpyiwY2SUJsyxZw/MlK98688oUmjF7cgMe/E=
 github.com/0chain/gosdk v1.2.6/go.mod h1:EntD+g2xA5SLUAm6JABMhkYAlTOmp0XhSnf/5xfwnV4=
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
@@ -11,12 +15,6 @@ github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible h1
 github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible/go.mod h1:r7JcOSlj0wfOMncg0iLm8Leh48TZaKVeNIfJntJ2wa0=
 github.com/Masterminds/semver/v3 v3.1.1 h1:hLg3sBzpNErnxhQtUy/mmLR2I9foDujNK030IGemrRc=
 github.com/Masterminds/semver/v3 v3.1.1/go.mod h1:VPu/7SZ7ePZ3QOrcuXROw5FAcLl4a0cBrbBpGY/8hQs=
-github.com/MurashovVen/bandwidth-marketplace/code/core v0.0.0-20210602125534-ff0e3391108c h1:sX9heANmmoWtvpW7xRTEC4jJk1Zd3kIqN/uTHAo8eSo=
-github.com/MurashovVen/bandwidth-marketplace/code/core v0.0.0-20210602125534-ff0e3391108c/go.mod h1:pwwILPfJWFCDo1qnmhe0NT+2Gz7lg2Q8LkCKvMkkU1Y=
-github.com/MurashovVen/bandwidth-marketplace/code/core v0.0.0-20210603151312-730db77b053b h1:aqi9Tc9tADOApDxbQJpKG3I7R6pNXFDs0mO9ZNgR9Sc=
-github.com/MurashovVen/bandwidth-marketplace/code/core v0.0.0-20210603151312-730db77b053b/go.mod h1:pwwILPfJWFCDo1qnmhe0NT+2Gz7lg2Q8LkCKvMkkU1Y=
-github.com/MurashovVen/bandwidth-marketplace/code/pb v0.0.0-20210603151312-730db77b053b h1:gjCTnM0vAI9ERdA8MhRIoYyWSy38W81B57WwympPSFc=
-github.com/MurashovVen/bandwidth-marketplace/code/pb v0.0.0-20210603151312-730db77b053b/go.mod h1:to69xt8aEK9wqhLvfO1//LjbDaSlnFth4l3eAwBfk30=
 github.com/Shopify/sarama v1.19.0 h1:9oksLxC6uxVPHPVYUmq6xhr1BOF/hHobWH2UzO67z1s=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.4+incompatible h1:TKdv8HiTLgE5wdJuEML90aBgNWsokNbMijUGhmcoBJc=

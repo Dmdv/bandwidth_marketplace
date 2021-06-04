@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/context"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/limiter"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/log"
+	"github.com/0chain/bandwidth_marketplace/code/core/context"
+	"github.com/0chain/bandwidth_marketplace/code/core/limiter"
+	"github.com/0chain/bandwidth_marketplace/code/core/log"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"

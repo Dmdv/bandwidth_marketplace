@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/log"
-	"github.com/MurashovVen/bandwidth-marketplace/code/pb/consumer"
-	"github.com/MurashovVen/bandwidth-marketplace/code/pb/magma"
+	"github.com/0chain/bandwidth_marketplace/code/core/log"
+	"github.com/0chain/bandwidth_marketplace/code/pb/consumer"
+	"github.com/0chain/bandwidth_marketplace/code/pb/magma"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

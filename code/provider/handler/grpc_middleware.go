@@ -4,14 +4,13 @@ import (
 	"context"
 	"time"
 
+	"github.com/0chain/bandwidth_marketplace/code/core/datastore"
+	"github.com/0chain/bandwidth_marketplace/code/core/errors"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/datastore"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/errors"
 )
 
 const (

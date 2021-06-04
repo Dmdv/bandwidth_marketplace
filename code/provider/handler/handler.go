@@ -4,12 +4,12 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/0chain/bandwidth_marketplace/code/core/build"
+	"github.com/0chain/bandwidth_marketplace/code/core/chain"
+	"github.com/0chain/bandwidth_marketplace/code/core/datastore"
+	"github.com/0chain/bandwidth_marketplace/code/core/log"
+	"github.com/0chain/bandwidth_marketplace/code/core/node"
 	"github.com/0chain/gosdk/zcncore"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/build"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/chain"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/datastore"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/log"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/node"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 )

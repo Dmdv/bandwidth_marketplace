@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/0chain/bandwidth_marketplace/code/core/consumer"
+	"github.com/0chain/bandwidth_marketplace/code/core/errors"
+	"github.com/0chain/bandwidth_marketplace/code/core/log"
+	"github.com/0chain/bandwidth_marketplace/code/core/node"
+	"github.com/0chain/bandwidth_marketplace/code/core/transaction"
 	"github.com/0chain/gosdk/zcncore"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/consumer"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/errors"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/log"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/node"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/transaction"
 	"go.uber.org/zap"
 
 	"consumer/config"

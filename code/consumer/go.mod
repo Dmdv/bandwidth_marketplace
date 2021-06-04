@@ -3,9 +3,9 @@ module consumer
 go 1.16
 
 require (
+    github.com/0chain/bandwidth_marketplace/code/core v0.0.0-20210604072009-adc49b62ee72
+	github.com/0chain/bandwidth_marketplace/code/pb v0.0.0-20210604072009-adc49b62ee72 // indirect
 	github.com/0chain/gosdk v1.2.6
-	github.com/MurashovVen/bandwidth-marketplace/code/core v0.0.0-20210603151312-730db77b053b
-	github.com/MurashovVen/bandwidth-marketplace/code/pb v0.0.0-20210603151312-730db77b053b
 	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
