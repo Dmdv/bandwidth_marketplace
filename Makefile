@@ -53,16 +53,16 @@ proto_path=./code
 generate:
 	@echo "Compiling protobuf files..."
 	@protoc -I $(proto_path) \
-	--go_opt=module="github.com/MurashovVen/bandwidth-marketplace/code" \
-	--go-grpc_opt=module="github.com/MurashovVen/bandwidth-marketplace/code" \
+	--go_opt=module="github.com/0chain/bandwidth_marketplace/code" \
+	--go-grpc_opt=module="github.com/0chain/bandwidth_marketplace/code" \
 	--go-grpc_out=$(proto_path) \
 	--go_out=$(proto_path) \
 	--grpc-gateway_out=$(proto_path) \
 	$(proto_path)/pb/consumer/proto/*.proto
 
 	@protoc -I $(proto_path) \
-	--go_opt=module="github.com/MurashovVen/bandwidth-marketplace/code" \
-    --go-grpc_opt=module="github.com/MurashovVen/bandwidth-marketplace/code" \
+	--go_opt=module="github.com/0chain/bandwidth_marketplace/code" \
+    --go-grpc_opt=module="github.com/0chain/bandwidth_marketplace/code" \
 	--go-grpc_out=$(proto_path) \
 	--go_out=$(proto_path) \
 	--grpc-gateway_out=$(proto_path) \

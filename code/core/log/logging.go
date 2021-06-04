@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/errors"
+	"github.com/0chain/bandwidth_marketplace/code/core/errors"
 )
 
 var (

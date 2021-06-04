@@ -8,11 +8,11 @@ import (
 	"github.com/0chain/gosdk/zcncore"
 	"go.uber.org/zap"
 
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/chain"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/errors"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/log"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/node"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/time"
+	"github.com/0chain/bandwidth_marketplace/code/core/chain"
+	"github.com/0chain/bandwidth_marketplace/code/core/errors"
+	"github.com/0chain/bandwidth_marketplace/code/core/log"
+	"github.com/0chain/bandwidth_marketplace/code/core/node"
+	"github.com/0chain/bandwidth_marketplace/code/core/time"
 )
 
 type (

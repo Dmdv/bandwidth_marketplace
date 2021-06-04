@@ -10,7 +10,7 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/log"
+	"github.com/0chain/bandwidth_marketplace/code/core/log"
 )
 
 type (

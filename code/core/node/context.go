@@ -3,7 +3,7 @@ package node
 import (
 	ctx "context"
 
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/context"
+	"github.com/0chain/bandwidth_marketplace/code/core/context"
 )
 
 const SelfNode context.CtxKey = "SELF_NODE"

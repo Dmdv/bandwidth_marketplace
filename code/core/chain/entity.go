@@ -1,7 +1,7 @@
 package chain
 
 import (
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/time"
+	"github.com/0chain/bandwidth_marketplace/code/core/time"
 )
 
 // Chain represents data structure that holds the chain data.

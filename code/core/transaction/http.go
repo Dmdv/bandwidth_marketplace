@@ -13,9 +13,9 @@ import (
 	"github.com/0chain/gosdk/zcncore"
 	"go.uber.org/zap"
 
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/errors"
-	chttp "github.com/MurashovVen/bandwidth-marketplace/code/core/http"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/log"
+	"github.com/0chain/bandwidth_marketplace/code/core/errors"
+	chttp "github.com/0chain/bandwidth_marketplace/code/core/http"
+	"github.com/0chain/bandwidth_marketplace/code/core/log"
 )
 
 const (

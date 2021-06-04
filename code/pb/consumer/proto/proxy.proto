@@ -1,7 +1,7 @@
 syntax = "proto3";
 package zchain.pb.consumer;
 
-option go_package = "github.com/MurashovVen/bandwidth-marketplace/code/pb/consumer";
+option go_package = "github.com/0chain/bandwidth_marketplace/code/pb/consumer";
 
 service Proxy {
   rpc NotifyNewProvider (NotifyNewProviderRequest) returns (ChangeProviderResponse);

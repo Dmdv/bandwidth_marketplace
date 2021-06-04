@@ -7,9 +7,9 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/context"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/errors"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/log"
+	"github.com/0chain/bandwidth_marketplace/code/core/context"
+	"github.com/0chain/bandwidth_marketplace/code/core/errors"
+	"github.com/0chain/bandwidth_marketplace/code/core/log"
 )
 
 const Connection context.CtxKey = "connection"

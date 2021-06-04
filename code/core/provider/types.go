@@ -3,8 +3,8 @@ package provider
 import (
 	"encoding/json"
 
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/node"
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/transaction"
+	"github.com/0chain/bandwidth_marketplace/code/core/node"
+	"github.com/0chain/bandwidth_marketplace/code/core/transaction"
 )
 
 type (

@@ -1,4 +1,4 @@
-module github.com/MurashovVen/bandwidth-marketplace/code/pb
+module github.com/0chain/bandwidth_marketplace/code/pb
 
 go 1.16
 

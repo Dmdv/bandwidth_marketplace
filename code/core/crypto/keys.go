@@ -8,7 +8,7 @@ import (
 	"github.com/0chain/gosdk/core/common"
 	"github.com/0chain/gosdk/core/zcncrypto"
 
-	"github.com/MurashovVen/bandwidth-marketplace/code/core/errors"
+	"github.com/0chain/bandwidth_marketplace/code/core/errors"
 )
 
 // ReadKeysFile reads file existing in keysFile dir and parses public and private keys from file.

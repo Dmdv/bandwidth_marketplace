@@ -1,6 +1,6 @@
-module github.com/MurashovVen/bandwidth-marketplace/code/core
+module github.com/0chain/bandwidth_marketplace/code/core
 
-go 1.13
+go 1.16
 
 require (
 	github.com/0chain/gosdk v1.2.6
