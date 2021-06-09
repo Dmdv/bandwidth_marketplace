@@ -6,7 +6,8 @@ import "pb/consumer/proto/hss.proto";
 option go_package = "github.com/0chain/bandwidth_marketplace/code/pb/magma";
 
 service Magma {
-  rpc Connect (ConnectRequest) returns (ConnectResponse);
+  rpc Connect (ConnectRequest) returns (NewSessionStart);
+  rpc ReportUsage (ReportUsageRequest) returns (ReportUsageResponse);
 }
 
 message ConnectRequest {
@@ -17,11 +18,26 @@ message ConnectRequest {
   consumer.Auth auth = 6;
 }
 
-message ConnectResponse {
-  Status status = 1;
+message NewSessionStart {
+  string sessionID = 1;
+  ConnectionStatus status = 2;
 }
 
-enum Status {
+enum ConnectionStatus {
   Failed = 0;
   Connected = 1;
 }
+
+message ReportUsageRequest {
+  UsageData usageData = 1;
+  string providerID = 2;
+}
+
+message UsageData {
+  string sessionID = 1;
+  uint64 octets_in = 2;
+  uint64 octets_out = 3;
+  uint64 session_time = 4; // in seconds
+}
+
+message ReportUsageResponse {}

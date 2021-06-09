@@ -36,7 +36,7 @@ services:
     networks:
       default:
       testnet0:
-        ipv4_address: 198.18.1.9${PROVIDER}
+        ipv4_address: 198.18.1.1${PROVIDER}
 
 networks:
   default:

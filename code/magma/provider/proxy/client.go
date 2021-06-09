@@ -1,18 +1,18 @@
-package client
+package proxy
 
 import (
-	"github.com/0chain/bandwidth_marketplace/code/pb/consumer"
+	"github.com/0chain/bandwidth_marketplace/code/pb/provider"
 	"google.golang.org/grpc"
 )
 
-// Client creates default grpc.ProxyClient.
-func Client(addr string) (consumer.ProxyClient, error) {
+// Client creates default Proxy client.
+func Client(addr string) (provider.ProxyClient, error) {
 	conn, err := dial(addr)
 	if err != nil {
 		return nil, err
 	}
 
-	client := consumer.NewProxyClient(conn)
+	client := provider.NewProxyClient(conn)
 
 	return client, nil
 }

@@ -18,7 +18,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MagmaClient interface {
-	Connect(ctx context.Context, in *ConnectRequest, opts ...grpc.CallOption) (*ConnectResponse, error)
+	Connect(ctx context.Context, in *ConnectRequest, opts ...grpc.CallOption) (*NewSessionStart, error)
+	ReportUsage(ctx context.Context, in *ReportUsageRequest, opts ...grpc.CallOption) (*ReportUsageResponse, error)
 }
 
 type magmaClient struct {
@@ -29,9 +30,18 @@ func NewMagmaClient(cc grpc.ClientConnInterface) MagmaClient {
 	return &magmaClient{cc}
 }
 
-func (c *magmaClient) Connect(ctx context.Context, in *ConnectRequest, opts ...grpc.CallOption) (*ConnectResponse, error) {
-	out := new(ConnectResponse)
+func (c *magmaClient) Connect(ctx context.Context, in *ConnectRequest, opts ...grpc.CallOption) (*NewSessionStart, error) {
+	out := new(NewSessionStart)
 	err := c.cc.Invoke(ctx, "/zchain.pb.magma.Magma/Connect", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *magmaClient) ReportUsage(ctx context.Context, in *ReportUsageRequest, opts ...grpc.CallOption) (*ReportUsageResponse, error) {
+	out := new(ReportUsageResponse)
+	err := c.cc.Invoke(ctx, "/zchain.pb.magma.Magma/ReportUsage", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +52,8 @@ func (c *magmaClient) Connect(ctx context.Context, in *ConnectRequest, opts ...g
 // All implementations must embed UnimplementedMagmaServer
 // for forward compatibility
 type MagmaServer interface {
-	Connect(context.Context, *ConnectRequest) (*ConnectResponse, error)
+	Connect(context.Context, *ConnectRequest) (*NewSessionStart, error)
+	ReportUsage(context.Context, *ReportUsageRequest) (*ReportUsageResponse, error)
 	mustEmbedUnimplementedMagmaServer()
 }
 
@@ -50,8 +61,11 @@ type MagmaServer interface {
 type UnimplementedMagmaServer struct {
 }
 
-func (UnimplementedMagmaServer) Connect(context.Context, *ConnectRequest) (*ConnectResponse, error) {
+func (UnimplementedMagmaServer) Connect(context.Context, *ConnectRequest) (*NewSessionStart, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Connect not implemented")
+}
+func (UnimplementedMagmaServer) ReportUsage(context.Context, *ReportUsageRequest) (*ReportUsageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReportUsage not implemented")
 }
 func (UnimplementedMagmaServer) mustEmbedUnimplementedMagmaServer() {}
 
@@ -84,6 +98,24 @@ func _Magma_Connect_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Magma_ReportUsage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReportUsageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MagmaServer).ReportUsage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zchain.pb.magma.Magma/ReportUsage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MagmaServer).ReportUsage(ctx, req.(*ReportUsageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Magma_ServiceDesc is the grpc.ServiceDesc for Magma service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -94,6 +126,10 @@ var Magma_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Connect",
 			Handler:    _Magma_Connect_Handler,
+		},
+		{
+			MethodName: "ReportUsage",
+			Handler:    _Magma_ReportUsage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

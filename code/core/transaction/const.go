@@ -24,6 +24,10 @@ const (
 	// GetAllProvidersRP represents MagmaSC relative path.
 	// Used to list all registered in the blockchain rest points.
 	GetAllProvidersRP = "/getAllProviders"
+
+	// VerifyAcknowledgmentAcceptedRP represents MagmaSC relative path.
+	// Used to verify accepting Provider's terms by Consumer.
+	VerifyAcknowledgmentAcceptedRP = "/verifyAcknowledgmentAccepted"
 )
 
 type (

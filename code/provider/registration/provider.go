@@ -35,8 +35,8 @@ func Setup(cfg *config.Config, wallet string) {
 }
 
 // RegisterWithRetries registers the current self node in blockchain with retries.
-// Checks self node for already registered bandwidth-marketplace with same ID,
-// and if not executes transaction.RegisterConsumerFuncName and verifies including transaction in blockchain.
+// Checks self node for already registered provider node with same ID,
+// and if not executes transaction that registers provider and verifies including transaction in blockchain.
 //
 // If an error occurs during execution, the program terminates with code 2 and the last error will be written in os.Stderr.
 //

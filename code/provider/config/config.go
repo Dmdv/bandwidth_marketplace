@@ -17,6 +17,10 @@ type (
 		Logging     Logging     `yaml:"logging"`
 		Terms       Terms       `yaml:"terms"`
 
+		MagmaAddress      string `yaml:"magma_address"`
+		AccessPointID     string `yaml:"access_point_id"`
+		GRPCServerTimeout int    `yaml:"grpc_server_timeout"` // in seconds
+
 		CLConfig CommandLineConfig
 	}
 

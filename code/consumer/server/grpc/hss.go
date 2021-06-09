@@ -1,4 +1,4 @@
-package server
+package grpc
 
 import (
 	"context"
@@ -10,16 +10,11 @@ import (
 	"github.com/0chain/bandwidth_marketplace/code/core/time"
 	"github.com/0chain/bandwidth_marketplace/code/pb/consumer"
 	"go.uber.org/zap"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	"consumer/config"
 )
-
-func RegisterGRPCServices(server *grpc.Server, cfg config.HSS) {
-	consumer.RegisterHSSServer(server, newHSSServerFromConfig(cfg))
-}
 
 type (
 	// hssServer represents base implementation of grpc.HSSServer.
@@ -43,34 +38,50 @@ func newHSSServerFromConfig(cfg config.HSS) consumer.HSSServer {
 // VerifyUser checks if the user with the provided id belongs to configured users, verifies signature
 // and checks creation date of request.
 func (h hssServer) VerifyUser(_ context.Context, request *consumer.VerifyUserRequest) (*consumer.VerifyUserResponse, error) {
-	var unverifiedResponse = &consumer.VerifyUserResponse{Status: consumer.VerificationStatus_Unverified}
-	log.Logger.Info("Got verifyUser request", zap.Any("request", request))
+	log.Logger.Info("HSS: Got VerifyUser request.", zap.Any("request", request))
 
+	var unverifiedResponse = &consumer.VerifyUserResponse{Status: consumer.VerificationStatus_Unverified}
 	switch {
 	case !slices.ContainsStr(h.users, request.GetUserID()):
 		return unverifiedResponse, status.Error(codes.PermissionDenied, "user with requested id unverified")
+
 	case !isValid(request):
 		return unverifiedResponse, status.Error(codes.InvalidArgument, "request message is invalid")
+
 	case !verifySignature(request):
 		return unverifiedResponse, status.Error(codes.PermissionDenied, "provided signature is invalid")
 	}
+
+	log.Logger.Info("HSS: Handling VerifyUser successfully ended.")
 
 	return &consumer.VerifyUserResponse{Status: consumer.VerificationStatus_Verified}, nil
 }
 
 // verifySignature verifies signature of creation date from request.
 func verifySignature(msg *consumer.VerifyUserRequest) bool {
-	hash := crypto.Hash(msg.GetAuth().GetCreationDate())
-	ver, err := crypto.Verify(msg.GetUserID(), msg.GetAuth().GetSignature(), hash, msg.GetAuth().GetSignatureScheme())
+	var (
+		hash      = crypto.Hash(msg.GetAuth().GetCreationDate())
+		pbK       = msg.GetAuth().GetPublicKey()
+		sign      = msg.GetAuth().GetSignature()
+		sigScheme = msg.GetAuth().GetSignatureScheme()
+	)
+	ver, err := crypto.Verify(pbK, sign, hash, sigScheme)
 	return ver && err == nil
 }
 
 // isValid checks creation date from request.
 func isValid(msg *consumer.VerifyUserRequest) bool {
 	ts, err := strconv.Atoi(msg.Auth.CreationDate)
-	if err != nil {
-		return false
+
+	switch {
+	// something went wrong
+	case err != nil:
+	case int(time.Now()) < ts:
+	case msg.GetUserID() != crypto.Hash(msg.GetAuth().GetPublicKey()):
+
+	default: // ok
+		return true
 	}
 
-	return int(time.Now()) > ts
+	return false
 }

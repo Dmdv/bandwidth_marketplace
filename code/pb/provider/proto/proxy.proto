@@ -1,0 +1,23 @@
+syntax = "proto3";
+package zchain.pb.provider;
+
+import "pb/magma/proto/magma.proto";
+
+option go_package = "github.com/0chain/bandwidth_marketplace/code/pb/provider";
+
+service Proxy {
+  rpc NewSessionBilling (NewSessionBillingRequest) returns (NewSessionBillingResponse);
+  rpc ForwardUsage (magma.UsageData) returns (ForwardUsageResponse);
+}
+
+message NewSessionBillingRequest {
+  string sessionID = 1;
+  string userID = 2;
+  string consumerID = 3;
+  string accessPointID = 4;
+  string acknowledgmentID = 5;
+}
+
+message NewSessionBillingResponse {}
+
+message ForwardUsageResponse {}

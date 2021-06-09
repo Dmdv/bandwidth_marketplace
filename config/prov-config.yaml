@@ -2,6 +2,8 @@ server_chain:
   id: ""
   owner_id: ""
   signature_scheme: "bls0chain"
+
+  # Represents dns address.
   block_worker: http://198.18.0.98:9091
 
 handler:
@@ -18,10 +20,22 @@ db:
 logging:
   level: "info"
 
-Terms:
+# Use this section to configure terms of provider. Configuration is being used only while registration process.
+# If node already registered in blockchain, you should update terms manually using cli client.
+terms:
   # token per megabyte
   price: 1
+
   qos:
     # megabits per second
     download_mbps: 10
+
+    # megabits per second
     upload_mbps: 10
+
+magma_address: "198.18.0.21:7051"
+
+access_point_id: "access point id"
+
+# in seconds
+grpc_server_timeout: 15

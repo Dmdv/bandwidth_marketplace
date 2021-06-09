@@ -19,7 +19,8 @@ type (
 		HSS         HSS         `yaml:"hss"`
 		Proxy       Proxy       `yaml:"proxy"`
 
-		MagmaAddress string `yaml:"magma_address"` // represents address of Magma service
+		MagmaAddress      string `yaml:"magma_address"`       // represents address of Magma service
+		GRPCServerTimeout int    `yaml:"grpc_server_timeout"` // in seconds
 
 		CLConfig CommandLineConfig
 	}

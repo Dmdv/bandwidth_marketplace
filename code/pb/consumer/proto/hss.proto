@@ -17,6 +17,8 @@ message Auth {
   string creationDate = 1;
   string signatureScheme = 2;
   string signature = 3;
+  // hex encoded public key bytes.
+  string publicKey = 4;
 }
 
 message VerifyUserResponse {

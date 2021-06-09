@@ -15,7 +15,8 @@ message NotifyNewProviderRequest {
 }
 
 message ChangeProviderResponse {
-  ChangeStatus Status = 1;
+  string AcknowledgmentID = 1;
+  ChangeStatus Status = 2;
 }
 
 enum ChangeStatus {

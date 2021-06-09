@@ -2,5 +2,6 @@
 .vscode/
 docker.local/consumer*/
 docker.local/provider*/
+docker.local/magma/
 
 code/magma/log/

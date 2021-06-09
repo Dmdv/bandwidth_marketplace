@@ -1,0 +1,28 @@
+version: "3"
+services:
+  magma:
+    image: magma
+    environment:
+      - DOCKER= true
+    volumes:
+      - ../config:/magma/config
+      - ./magma/log:/magma/log
+    ports:
+      - "5081:5081"
+      - "7051:7051"
+    command: ./bin/magma
+    networks:
+      default:
+      testnet0:
+        ipv4_address: 198.18.0.21
+
+networks:
+  default:
+    driver: bridge
+  testnet0:
+    external: true
+
+volumes:
+  data:
+  config:
+  bin:

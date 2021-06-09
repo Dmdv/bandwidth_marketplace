@@ -18,7 +18,7 @@ import (
 
 	"magma/config"
 	"magma/handler"
-	mserver "magma/magma/server"
+	"magma/server/grpc"
 )
 
 func main() {
@@ -28,8 +28,8 @@ func main() {
 
 	context.SetupRootContext(ctx.Background())
 
-	server := createServer(cfg)
-	errMsg := server.ListenAndServe().Error()
+	serv := createServer(cfg)
+	errMsg := serv.ListenAndServe().Error()
 	log.Logger.Fatal(errMsg)
 }
 
@@ -65,21 +65,18 @@ func createServer(cfg *config.Config) (server *http.Server) {
 }
 
 func startGRPC(cfg *config.Config) {
-	listener, err := net.Listen("tcp", ":"+strconv.Itoa(cfg.GRPCPort))
+	listener, err := net.Listen("tcp", cfg.GRPCAddress)
 	if err != nil {
 		log.Logger.Fatal("failed to listen", zap.Error(err))
 	}
 
-	server := handler.NewServerWithMiddlewares(log.Logger)
-
-	// key - ID, value - address
-	preConfiguredConsumers := map[string]string{
-		"3d8b2c47542404b0059a4c320dca873645d0a3259532a8e17e4cd10db2ef2012b0ba6ef46c5dffab0bb43c05cfc3da7004adf5fe5497e339b298f742fa9843a3": ":7031",
-	}
-	mserver.RegisterGRPCServices(server, preConfiguredConsumers)
+	timeout := time.Duration(cfg.GRPCServerTimeout) * time.Second
+	serv := grpc.NewServerWithMiddlewares(log.Logger, timeout)
+	grpc.RegisterGRPCServices(serv, cfg.PreConfiguredConsumers, cfg.PreConfiguredProviders)
+	log.Logger.Info("pre configured nodes", zap.Any("consumers", cfg.PreConfiguredConsumers), zap.Any("providers", cfg.PreConfiguredProviders))
 
 	log.Logger.Info("Server preparing to be started")
-	errMsg := server.Serve(listener).Error()
+	errMsg := serv.Serve(listener).Error()
 	log.Logger.Fatal(errMsg)
 }
 

@@ -1,4 +1,4 @@
-package handler
+package grpc
 
 import (
 	"context"
@@ -10,21 +10,15 @@ import (
 	"google.golang.org/grpc"
 )
 
-const (
-	// TimeoutSeconds represents the deadline for handling requests.
-	TimeoutSeconds = 10
-)
-
-func unaryTimeoutInterceptor() grpc.UnaryServerInterceptor {
+func unaryTimeoutInterceptor(timeout time.Duration) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-		deadline := time.Now().Add(TimeoutSeconds * time.Second)
-		ctx, cancel := context.WithDeadline(ctx, deadline)
+		ctx, cancel := context.WithTimeout(ctx, timeout)
 		defer cancel()
 		return handler(ctx, req)
 	}
 }
 
-func NewServerWithMiddlewares(logger *zap.Logger) *grpc.Server {
+func NewServerWithMiddlewares(logger *zap.Logger, timeout time.Duration) *grpc.Server {
 	return grpc.NewServer(
 		grpc.ChainStreamInterceptor(
 			grpc_zap.StreamServerInterceptor(logger),
@@ -33,7 +27,7 @@ func NewServerWithMiddlewares(logger *zap.Logger) *grpc.Server {
 		grpc.ChainUnaryInterceptor(
 			grpc_zap.UnaryServerInterceptor(logger),
 			grpc_recovery.UnaryServerInterceptor(),
-			unaryTimeoutInterceptor(), // should always be the last, to be "innermost"
+			unaryTimeoutInterceptor(timeout), // should always be the last, to be "innermost"
 		),
 	)
 }

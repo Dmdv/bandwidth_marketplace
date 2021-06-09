@@ -22,6 +22,7 @@ import (
 	"provider/config"
 	"provider/handler"
 	"provider/registration"
+	"provider/server/grpc"
 )
 
 func main() {
@@ -106,8 +107,9 @@ func startGRPC(cfg *config.Config) {
 		log.Logger.Fatal("failed to listen", zap.Error(err))
 	}
 
-	server := handler.NewServerWithMiddlewares(log.Logger)
-	//  TODO: add registration
+	timeout := time.Duration(cfg.GRPCServerTimeout) * time.Second
+	server := grpc.NewServerWithMiddlewares(log.Logger, timeout)
+	grpc.RegisterGRPCServices(server, cfg)
 
 	errMsg := server.Serve(listener).Error()
 	log.Logger.Fatal(errMsg)

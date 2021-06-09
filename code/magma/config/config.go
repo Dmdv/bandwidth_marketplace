@@ -10,8 +10,12 @@ import (
 type (
 	// Config represents configs stores in Path.
 	Config struct {
-		Port     int `yaml:"port"`
-		GRPCPort int `yaml:"grpc_port"`
+		Port              int    `yaml:"port"`
+		GRPCAddress       string `yaml:"grpc_address"`
+		GRPCServerTimeout int    `yaml:"grpc_server_timeout"` // in seconds
+
+		PreConfiguredConsumers map[string]string `yaml:"pre_configured_consumers"`
+		PreConfiguredProviders map[string]string `yaml:"pre_configured_providers"`
 
 		Handler Handler `yaml:"handler"`
 		HSS     HSS     `yaml:"hss"`
@@ -40,7 +44,7 @@ type (
 
 const (
 	// Path is a constant stores path to config file from root application directory.
-	Path = "./config.yaml"
+	Path = "./config/magma-config.yaml"
 )
 
 // Read reads configs from config file existing in Path.
