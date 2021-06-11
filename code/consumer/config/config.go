@@ -16,7 +16,6 @@ type (
 		Handler     Handler     `yaml:"handler"`
 		Database    Database    `yaml:"db"`
 		Logging     Logging     `yaml:"logging"`
-		HSS         HSS         `yaml:"hss"`
 		Proxy       Proxy       `yaml:"proxy"`
 
 		MagmaAddress      string `yaml:"magma_address"`       // represents address of Magma service
@@ -54,12 +53,6 @@ type (
 	// Database must be a field of Config struct
 	Logging struct {
 		Level string `yaml:"level"`
-	}
-
-	// HSS represents config options described in "hss" section of the config yaml file.
-	// HSS must be a field of Config struct
-	HSS struct {
-		Users []string `yaml:"users"`
 	}
 
 	// Proxy represents config options described in "proxy" section of the config yaml file.

@@ -23,12 +23,6 @@ logging:
 # Represents address of magma service.
 magma_address: "198.18.0.21:7051"
 
-hss:
-  # Represents pre configured registered users.
-  users: [
-      "ad48a91f6cac943805a60c143986644d861639ed9cde711de5135b6de95cb74b",
-  ]
-
 proxy:
   # Represents configuration which determines consumer's decision about accepting provider terms.
   terms:
@@ -43,4 +37,4 @@ proxy:
       min_upload_bmps: 10
 
 # in seconds
-grpc_server_timeout: 15
+grpc_server_timeout: 30

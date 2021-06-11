@@ -8,6 +8,6 @@ import (
 )
 
 func RegisterGRPCServices(server *grpc.Server, cfg *config.Config) {
-	consumer.RegisterHSSServer(server, newHSSServerFromConfig(cfg.HSS))
+	consumer.RegisterHSSServer(server, newHSSServerFromConfig())
 	consumer.RegisterProxyServer(server, newProxyServer(cfg.Proxy, cfg.MagmaAddress))
 }
