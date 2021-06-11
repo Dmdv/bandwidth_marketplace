@@ -3,8 +3,8 @@ cloud.google.com/go v0.34.0 h1:eOI3/cP2VTU6uZLDYAoic+eyzzB9YyGmJ7eIjl8rOPg=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/0chain/bandwidth_marketplace/code/core v0.0.0-20210604080537-1ec642c22c7b h1:/1BLdX8YJsepjIGgb/NvxSAfwB5xMSALvlst/iuVKP4=
 github.com/0chain/bandwidth_marketplace/code/core v0.0.0-20210604080537-1ec642c22c7b/go.mod h1:qlYzNZee/etk4xN7PpmnXTLHFdZGDPi/GDNu0haivS0=
-github.com/0chain/bandwidth_marketplace/code/pb v0.0.0-20210609133225-11a036e57982 h1:yhPmp+dqV2ql8wfSEnAVlZx170eceN/XXU8rhltHP6M=
-github.com/0chain/bandwidth_marketplace/code/pb v0.0.0-20210609133225-11a036e57982/go.mod h1:h14ab+YGQXD725gdI/Hj2MthgGqY3jLqCA4Ruu345Uw=
+github.com/0chain/bandwidth_marketplace/code/pb v0.0.0-20210611110922-edb653de27a2 h1:G9sg6hLd+UIFPjStc1zZp6tiWvB6KD7Rrb+wEKRs0Pk=
+github.com/0chain/bandwidth_marketplace/code/pb v0.0.0-20210611110922-edb653de27a2/go.mod h1:h14ab+YGQXD725gdI/Hj2MthgGqY3jLqCA4Ruu345Uw=
 github.com/0chain/gosdk v1.2.6 h1:824qUcItpyiwY2SUJsyxZw/MlK98688oUmjF7cgMe/E=
 github.com/0chain/gosdk v1.2.6/go.mod h1:EntD+g2xA5SLUAm6JABMhkYAlTOmp0XhSnf/5xfwnV4=
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
@@ -352,6 +352,8 @@ github.com/lightstep/lightstep-tracer-go v0.18.1 h1:vi1F1IQ8N7hNWytK9DpJsUfQhGuN
 github.com/lightstep/lightstep-tracer-go v0.18.1/go.mod h1:jlF1pusYV4pidLvZ+XD0UBX0ZE6WURAspgAczcDHrL4=
 github.com/lyft/protoc-gen-validate v0.0.13 h1:KNt/RhmQTOLr7Aj8PsJ7mTronaFyx80mRTT9qF261dA=
 github.com/lyft/protoc-gen-validate v0.0.13/go.mod h1:XbGvPuh87YZc5TdIa2/I4pLk0QoUACkjt2znoq26NVQ=
+github.com/magma/augmented-networks/accounting/protos v0.1.1 h1:eTl3BC7s/PmYvh/scQSHxlqgt1BYvnOArU0vzPSjVAU=
+github.com/magma/augmented-networks/accounting/protos v0.1.1/go.mod h1:Hpfg8aAxldUN7qlVtR5xwlAf8pcetFm8DWwRKZsh2J4=
 github.com/mattn/go-colorable v0.0.9/go.mod h1:9vuHe8Xs5qXnSaW/c/ABM9alt+Vo+STaOChaDxuIBZU=
 github.com/mattn/go-colorable v0.1.1/go.mod h1:FuOcm+DKB9mbwrcAfNl7/TZVBZ6rcnceauSikq3lYCQ=
 github.com/mattn/go-colorable v0.1.2/go.mod h1:U0ppj6V5qS13XJ6of8GYAs25YV2eR4EVcfRqFIhoBtE=
@@ -723,6 +725,7 @@ google.golang.org/grpc v1.25.1/go.mod h1:c3i+UQWmh7LiEpx4sFZnkU36qjEYZ0imhYfXVyQ
 google.golang.org/grpc v1.26.0/go.mod h1:qbnxyOmOxrQa7FizSgH+ReBfzJrCY1pSN7KXBS8abTk=
 google.golang.org/grpc v1.27.0/go.mod h1:qbnxyOmOxrQa7FizSgH+ReBfzJrCY1pSN7KXBS8abTk=
 google.golang.org/grpc v1.29.1/go.mod h1:itym6AZVZYACWQqET3MqgPpjcuV5QH3BxFS3IjizoKk=
+google.golang.org/grpc v1.31.0/go.mod h1:N36X2cJ7JwdamYAgDz+s+rVMFjt3numwzf/HckM8pak=
 google.golang.org/grpc v1.38.0 h1:/9BgsAsa5nWe26HqOlvlgJnqBuktYOLCgjCPqsa56W0=
 google.golang.org/grpc v1.38.0/go.mod h1:NREThFqKR1f3iQ6oBuvc5LadQuXVGo9rkm5ZGrQdJfM=
 google.golang.org/protobuf v0.0.0-20200109180630-ec00e32a8dfd/go.mod h1:DFci5gLYBciE7Vtevhsrf46CRTquxDuWsQurQQe4oz8=
