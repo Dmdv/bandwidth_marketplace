@@ -4,7 +4,6 @@ package provider
 
 import (
 	context "context"
-	magma "github.com/0chain/bandwidth_marketplace/code/pb/magma"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -20,7 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProxyClient interface {
 	NewSessionBilling(ctx context.Context, in *NewSessionBillingRequest, opts ...grpc.CallOption) (*NewSessionBillingResponse, error)
-	ForwardUsage(ctx context.Context, in *magma.UsageData, opts ...grpc.CallOption) (*ForwardUsageResponse, error)
+	ForwardUsage(ctx context.Context, in *ForwardUsageRequest, opts ...grpc.CallOption) (*ForwardUsageResponse, error)
 }
 
 type proxyClient struct {
@@ -40,7 +39,7 @@ func (c *proxyClient) NewSessionBilling(ctx context.Context, in *NewSessionBilli
 	return out, nil
 }
 
-func (c *proxyClient) ForwardUsage(ctx context.Context, in *magma.UsageData, opts ...grpc.CallOption) (*ForwardUsageResponse, error) {
+func (c *proxyClient) ForwardUsage(ctx context.Context, in *ForwardUsageRequest, opts ...grpc.CallOption) (*ForwardUsageResponse, error) {
 	out := new(ForwardUsageResponse)
 	err := c.cc.Invoke(ctx, "/zchain.pb.provider.Proxy/ForwardUsage", in, out, opts...)
 	if err != nil {
@@ -54,7 +53,7 @@ func (c *proxyClient) ForwardUsage(ctx context.Context, in *magma.UsageData, opt
 // for forward compatibility
 type ProxyServer interface {
 	NewSessionBilling(context.Context, *NewSessionBillingRequest) (*NewSessionBillingResponse, error)
-	ForwardUsage(context.Context, *magma.UsageData) (*ForwardUsageResponse, error)
+	ForwardUsage(context.Context, *ForwardUsageRequest) (*ForwardUsageResponse, error)
 	mustEmbedUnimplementedProxyServer()
 }
 
@@ -65,7 +64,7 @@ type UnimplementedProxyServer struct {
 func (UnimplementedProxyServer) NewSessionBilling(context.Context, *NewSessionBillingRequest) (*NewSessionBillingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NewSessionBilling not implemented")
 }
-func (UnimplementedProxyServer) ForwardUsage(context.Context, *magma.UsageData) (*ForwardUsageResponse, error) {
+func (UnimplementedProxyServer) ForwardUsage(context.Context, *ForwardUsageRequest) (*ForwardUsageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ForwardUsage not implemented")
 }
 func (UnimplementedProxyServer) mustEmbedUnimplementedProxyServer() {}
@@ -100,7 +99,7 @@ func _Proxy_NewSessionBilling_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _Proxy_ForwardUsage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(magma.UsageData)
+	in := new(ForwardUsageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -112,7 +111,7 @@ func _Proxy_ForwardUsage_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: "/zchain.pb.provider.Proxy/ForwardUsage",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProxyServer).ForwardUsage(ctx, req.(*magma.UsageData))
+		return srv.(ProxyServer).ForwardUsage(ctx, req.(*ForwardUsageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

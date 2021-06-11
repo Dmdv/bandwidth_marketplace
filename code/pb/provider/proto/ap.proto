@@ -2,7 +2,6 @@ syntax = "proto3";
 package zchain.pb.provider;
 
 import "pb/consumer/proto/hss.proto";
-import "pb/magma/proto/magma.proto";
 
 option go_package = "github.com/0chain/bandwidth_marketplace/code/pb/provider";
 
@@ -18,5 +17,4 @@ message ConnectRequest {
 
 message BeginSession{
   string sessionID = 1;
-  magma.ConnectionStatus status = 2;
 }
