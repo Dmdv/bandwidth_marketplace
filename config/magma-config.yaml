@@ -1,6 +1,6 @@
 port: 5081
 
-grpc_address: "198.18.0.21:7051"
+grpc_address: ":7051"
 
 logging:
   level: "info"
@@ -13,10 +13,9 @@ consumer:
   hss:
     address: ":7031"
 
-pre_configured_consumers:
-    ad48a91f6cac943805a60c143986644d861639ed9cde711de5135b6de95cb74b: "198.18.0.91:7031"
-pre_configured_providers:
-    7a90e6790bcd3d78422d7a230390edc102870fe58c15472073922024985b1c7d: "198.18.0.11:7041"
+consumer_address: "198.18.0.91:7031"
+
+provider_address: "198.18.0.11:7041"
 
 # in seconds
-grpc_server_timeout: 15
+grpc_server_timeout: 30

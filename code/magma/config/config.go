@@ -14,8 +14,8 @@ type (
 		GRPCAddress       string `yaml:"grpc_address"`
 		GRPCServerTimeout int    `yaml:"grpc_server_timeout"` // in seconds
 
-		PreConfiguredConsumers map[string]string `yaml:"pre_configured_consumers"`
-		PreConfiguredProviders map[string]string `yaml:"pre_configured_providers"`
+		ConsumerAddress string `yaml:"consumer_address"`
+		ProviderAddress string `yaml:"provider_address"`
 
 		Handler Handler `yaml:"handler"`
 		HSS     HSS     `yaml:"hss"`

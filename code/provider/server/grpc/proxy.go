@@ -2,12 +2,10 @@ package grpc
 
 import (
 	"context"
-	"errors"
 
 	"github.com/0chain/bandwidth_marketplace/code/core/log"
 	"github.com/0chain/bandwidth_marketplace/code/core/node"
 	"github.com/0chain/bandwidth_marketplace/code/core/transaction"
-	"github.com/0chain/bandwidth_marketplace/code/pb/magma"
 	"github.com/0chain/bandwidth_marketplace/code/pb/provider"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
@@ -46,7 +44,12 @@ func (p *proxyServer) NewSessionBilling(ctx context.Context, req *provider.NewSe
 	return &provider.NewSessionBillingResponse{}, nil
 }
 
-func (p *proxyServer) ForwardUsage(ctx context.Context, req *magma.UsageData) (*provider.ForwardUsageResponse, error) {
+func (p *proxyServer) ForwardUsage(ctx context.Context, req *provider.ForwardUsageRequest) (*provider.ForwardUsageResponse, error) {
+	log.Logger.Info("Proxy: Got ForwardUsage request.", zap.Any("request", req))
+
 	// TODO need implement after billUsage MagmaSC function implementation
-	return nil, errors.New("unimplemented")
+
+	log.Logger.Info("Proxy: Handling NewSessionBilling successfully ended.")
+
+	return &provider.ForwardUsageResponse{}, nil
 }

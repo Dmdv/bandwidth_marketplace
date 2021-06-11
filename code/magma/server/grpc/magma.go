@@ -8,8 +8,8 @@ import (
 	"github.com/0chain/bandwidth_marketplace/code/core/crypto"
 	"github.com/0chain/bandwidth_marketplace/code/core/log"
 	"github.com/0chain/bandwidth_marketplace/code/pb/consumer"
-	"github.com/0chain/bandwidth_marketplace/code/pb/magma"
 	"github.com/0chain/bandwidth_marketplace/code/pb/provider"
+	magma "github.com/magma/augmented-networks/accounting/protos"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -20,71 +20,63 @@ import (
 	pproxy "magma/provider/proxy"
 )
 
-func RegisterGRPCServices(server *grpc.Server, preConfiguredConsumers, preConfiguredProviders map[string]string) {
-	magma.RegisterMagmaServer(server, newMagmaServer(preConfiguredConsumers, preConfiguredProviders))
+func RegisterGRPCServices(server *grpc.Server, preConfiguredConsumers, preConfiguredProviders string) {
+	magma.RegisterAccountingServer(server, newMagmaServer(preConfiguredConsumers, preConfiguredProviders))
 }
 
 type (
 	magmaServer struct {
-		magma.UnimplementedMagmaServer
+		magma.UnimplementedAccountingServer
 
-		preConfiguredConsumers map[string]string
-		preConfiguredProviders map[string]string
+		consumerAddress string
+		providerAddress string
 	}
 )
 
 var (
 	// Make sure magmaServer implements interface.
-	_ magma.MagmaServer = (*magmaServer)(nil)
+	_ magma.AccountingServer = (*magmaServer)(nil)
 )
 
-func newMagmaServer(preConfiguredConsumers, preConfiguredProviders map[string]string) magma.MagmaServer {
+func newMagmaServer(consumerAddress, providerAddress string) magma.AccountingServer {
 	return &magmaServer{
-		preConfiguredConsumers: preConfiguredConsumers,
-		preConfiguredProviders: preConfiguredProviders,
+		consumerAddress: consumerAddress,
+		providerAddress: providerAddress,
 	}
 }
 
-// Connect handles connection request to Magma. It verifies user by making VerifyUser request to pre configured Consumer HSS,
-// notifies pre configured Provider Proxy by making NotifyNewProvider request and notifies Provider Proxy with
-// NewSessionBilling request.
-func (s *magmaServer) Connect(ctx context.Context, req *magma.ConnectRequest) (*magma.NewSessionStart, error) {
-	log.Logger.Info("Magma: Got Connect request", zap.Any("request", req))
+func (s *magmaServer) Start(ctx context.Context, req *magma.Session) (*magma.SessionResp, error) {
+	log.Logger.Info("Magma: Got Start request", zap.Any("request", req))
 
-	consAddr, ok := s.preConfiguredConsumers[req.UserID]
-	if !ok {
-		return nil, status.Error(codes.InvalidArgument, "consumer with provided ID does not exist")
-	}
-
-	provAddr, ok := s.preConfiguredProviders[req.ProviderID]
-	if !ok {
-		return nil, status.Error(codes.InvalidArgument, "provider with provided ID does not exist")
-	}
-
-	if err := verifyUser(ctx, req, consAddr); err != nil {
+	if err := verifyUser(ctx, req, s.consumerAddress); err != nil {
 		return nil, err
 	}
 
+	log.Logger.Info("Magma.Start: Consumer.HSS.VerifyUser successfully executed.")
+
 	sessionID := crypto.Hash(strconv.Itoa(int(time.Now().UnixNano()))) // TODO change on something better
-	acknID, err := notifyNewProvider(ctx, req, consAddr, sessionID)
+	acknID, err := notifyNewProvider(ctx, req, s.consumerAddress, sessionID)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := newSessionBilling(ctx, req, acknID, sessionID, provAddr); err != nil {
+	log.Logger.Info("Magma.Start: Consumer.Proxy.NotifyNewProvider successfully executed.")
+
+	if err := newSessionBilling(ctx, req, acknID, sessionID, s.providerAddress); err != nil {
 		return nil, err
 	}
 
-	log.Logger.Info("Magma: Handling Connect successfully ended.")
+	log.Logger.Info("Magma.Start: Provider.Proxy.NewSessionBilling successfully executed.")
 
-	return &magma.NewSessionStart{Status: magma.ConnectionStatus_Connected, SessionID: sessionID}, nil
+	log.Logger.Info("Magma: Handling Start successfully ended.")
+
+	return &magma.SessionResp{}, nil
 }
 
-// verifyUser creates Consumer HSS client and makes VerifyUser request with user ID and auth data from provided
-// magma.ConnectRequest.
+// verifyUser creates Consumer HSS client and makes VerifyUser request.
 //
 // It returns already configured status error with codes if error occurs while execution.
-func verifyUser(ctx context.Context, req *magma.ConnectRequest, hssAddr string) error {
+func verifyUser(ctx context.Context, req *magma.Session, hssAddr string) error {
 	cl, err := hss.Client(hssAddr)
 	if err != nil {
 		return status.Error(codes.Internal, "can not connect to consumer HSS making VerifyUser request")
@@ -93,41 +85,36 @@ func verifyUser(ctx context.Context, req *magma.ConnectRequest, hssAddr string) 
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 	vuReq := consumer.VerifyUserRequest{
-		UserID: req.UserID,
-		Auth:   req.Auth,
+		UserID: req.GetName(),
 	}
-	resp, err := cl.VerifyUser(ctx, &vuReq)
+	_, err = cl.VerifyUser(ctx, &vuReq)
 	if err != nil {
 		f := "requesting consumer HSS with VerifyUser request failed with err: %v"
 		return status.Errorf(codes.Unknown, f, err)
-	}
-
-	if resp.Status == consumer.VerificationStatus_Unverified {
-		return status.Error(codes.Unauthenticated, "user is not authenticated")
 	}
 
 	return nil
 }
 
 // notifyNewProvider creates Consumer Proxy client and makes NotifyNewProvider request with IDs from provided
-// magma.ConnectRequest and provided session ID.
+// session request and provided session ID.
 //
 // It returns already configured status error with codes if error occurs while execution,
 // else returns Acknowledgment ID.
-func notifyNewProvider(ctx context.Context, req *magma.ConnectRequest, proxyAddr, sessionID string) (string, error) {
+func notifyNewProvider(ctx context.Context, req *magma.Session, proxyAddr, sessionID string) (string, error) {
 	cl, err := cproxy.Client(proxyAddr)
 	if err != nil {
 		msg := "can not connect to consumer Proxy while making NotifyNewProvider request"
 		return "", status.Error(codes.Internal, msg)
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 	nnpReq := consumer.NotifyNewProviderRequest{
 		SessID:        sessionID,
-		UserID:        req.UserID,
-		ProviderID:    req.ProviderID,
-		AccessPointID: req.AccessPointID,
+		UserID:        req.GetName(),
+		ProviderID:    req.GetProviderId(),
+		AccessPointID: req.GetProviderApn(),
 	}
 	resp, err := cl.NotifyNewProvider(ctx, &nnpReq)
 	if err != nil {
@@ -146,20 +133,20 @@ func notifyNewProvider(ctx context.Context, req *magma.ConnectRequest, proxyAddr
 // magma.ConnectRequest, session ID and Acknowledgment ID.
 //
 // It returns already configured status error with codes if error occurs while execution.
-func newSessionBilling(ctx context.Context, req *magma.ConnectRequest, acknowledgmentID, sessionID, proxyAddr string) error {
+func newSessionBilling(ctx context.Context, req *magma.Session, acknowledgmentID, sessionID, proxyAddr string) error {
 	cl, err := pproxy.Client(proxyAddr)
 	if err != nil {
 		msg := "can not connect to provider Proxy while making NewSessionBilling request"
 		return status.Error(codes.Internal, msg)
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 	nsbReq := provider.NewSessionBillingRequest{
 		SessionID:        sessionID,
-		UserID:           req.UserID,
-		ConsumerID:       req.ConsumerID,
-		AccessPointID:    req.AccessPointID,
+		UserID:           req.GetName(),
+		ConsumerID:       req.GetConsumerId(),
+		AccessPointID:    req.GetProviderApn(),
 		AcknowledgmentID: acknowledgmentID,
 	}
 	_, err = cl.NewSessionBilling(ctx, &nsbReq)
@@ -171,29 +158,43 @@ func newSessionBilling(ctx context.Context, req *magma.ConnectRequest, acknowled
 	return nil
 }
 
-// ReportUsage handles reporting request from Provider's Access Point
-// and forwards it to pre configured Provider's Proxy.
-func (s *magmaServer) ReportUsage(ctx context.Context, req *magma.ReportUsageRequest) (*magma.ReportUsageResponse, error) {
-	log.Logger.Info("Magma: Got ReportUsage request.", zap.Any("request", req))
+func (s *magmaServer) Update(ctx context.Context, req *magma.UpdateReq) (*magma.SessionResp, error) {
+	log.Logger.Info("Magma: Got Update request.", zap.Any("request", req))
 
-	provAddr, ok := s.preConfiguredProviders[req.ProviderID]
-	if !ok {
-		return nil, status.Error(codes.InvalidArgument, "provider with provided ID does not exist")
-	}
-
-	cl, err := pproxy.Client(provAddr)
+	cl, err := pproxy.Client(s.providerAddress)
 	if err != nil {
 		msg := "can not connect to provider Proxy while making ForwardUsage request"
 		return nil, status.Error(codes.Internal, msg)
 	}
+
+	fuReq := provider.ForwardUsageRequest{
+		SessionID:   req.GetSession().GetSessionId(),
+		OctetsIn:    req.GetOctetsIn(),
+		OctetsOut:   req.GetOctetsOut(),
+		SessionTime: req.GetSessionTime(),
+	}
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
-	if _, err = cl.ForwardUsage(ctx, req.UsageData); err != nil {
+	if _, err = cl.ForwardUsage(ctx, &fuReq); err != nil {
 		f := "requesting consumer Proxy with NotifyNewProvider request failed with err: %v"
 		return nil, status.Errorf(codes.Unknown, f, err)
 	}
 
-	log.Logger.Info("Magma: Handling ReportUsage successfully ended.")
+	log.Logger.Info("Magma: Handling Update successfully ended.")
 
-	return &magma.ReportUsageResponse{}, err
+	return &magma.SessionResp{}, err
+}
+
+func (s magmaServer) Stop(ctx context.Context, req *magma.UpdateReq) (*magma.StopResp, error) {
+	log.Logger.Info("Magma: Got Stop request.", zap.Any("request", req))
+
+	_, err := s.Update(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	// TODO implement magma sc function
+
+	log.Logger.Info("Magma: Handling Stop successfully ended.")
+
+	return &magma.StopResp{}, nil
 }

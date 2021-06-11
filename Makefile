@@ -81,14 +81,6 @@ generate:
 	--go-grpc_out=$(proto_path) \
 	--go_out=$(proto_path) \
 	--grpc-gateway_out=$(proto_path) \
-	$(proto_path)/pb/magma/proto/*.proto
-
-	@protoc -I $(proto_path) \
-	--go_opt=module="github.com/0chain/bandwidth_marketplace/code" \
-    --go-grpc_opt=module="github.com/0chain/bandwidth_marketplace/code" \
-	--go-grpc_out=$(proto_path) \
-	--go_out=$(proto_path) \
-	--grpc-gateway_out=$(proto_path) \
 	$(proto_path)/pb/provider/proto/*.proto
 
 	@echo "Compiling completed."

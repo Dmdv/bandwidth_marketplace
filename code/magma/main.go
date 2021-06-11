@@ -57,7 +57,6 @@ func createServer(cfg *config.Config) (server *http.Server) {
 	}
 
 	context.HandleShutdown(server)
-	log.Logger.Info("Ready to listen to the requests")
 
 	go startGRPC(cfg)
 
@@ -72,10 +71,9 @@ func startGRPC(cfg *config.Config) {
 
 	timeout := time.Duration(cfg.GRPCServerTimeout) * time.Second
 	serv := grpc.NewServerWithMiddlewares(log.Logger, timeout)
-	grpc.RegisterGRPCServices(serv, cfg.PreConfiguredConsumers, cfg.PreConfiguredProviders)
-	log.Logger.Info("pre configured nodes", zap.Any("consumers", cfg.PreConfiguredConsumers), zap.Any("providers", cfg.PreConfiguredProviders))
+	grpc.RegisterGRPCServices(serv, cfg.ConsumerAddress, cfg.ProviderAddress)
 
-	log.Logger.Info("Server preparing to be started")
+	log.Logger.Info("GRPC server is preparing to be started.", zap.String("grps address", cfg.GRPCAddress))
 	errMsg := serv.Serve(listener).Error()
 	log.Logger.Fatal(errMsg)
 }

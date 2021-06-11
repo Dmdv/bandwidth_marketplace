@@ -38,4 +38,4 @@ magma_address: "198.18.0.21:7051"
 access_point_id: "access point id"
 
 # in seconds
-grpc_server_timeout: 15
+grpc_server_timeout: 30
