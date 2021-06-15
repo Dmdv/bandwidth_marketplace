@@ -3,7 +3,7 @@ module github.com/0chain/bandwidth_marketplace/code/core
 go 1.16
 
 require (
-	github.com/0chain/gosdk v1.2.6
+	github.com/0chain/gosdk v1.2.75
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/didip/tollbooth v4.0.2+incompatible
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
