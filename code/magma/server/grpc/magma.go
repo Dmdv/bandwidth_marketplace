@@ -112,7 +112,7 @@ func notifyNewProvider(ctx context.Context, req *magma.Session, idMaps config.ID
 		return "", status.Error(codes.Internal, msg)
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, 50*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 	nnpReq := consumer.NotifyNewProviderRequest{
 		SessID:        req.GetSessionId(),

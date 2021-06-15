@@ -18,7 +18,7 @@ consumer_address: "198.18.0.91:7031"
 provider_address: "198.18.0.11:7041"
 
 # in seconds
-grpc_server_timeout: 50
+grpc_server_timeout: 30
 
 # TODO: temp, need to find better solution
 id_maps:
