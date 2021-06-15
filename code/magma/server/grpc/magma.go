@@ -45,6 +45,9 @@ func newMagmaServer(consumerAddress, providerAddress string) magma.AccountingSer
 	}
 }
 
+// Start makes verification request to Consumer.HSS service,
+// notifies Consumer.Proxy with NotifyNewProvider request
+// and notifies Provider.Proxy with NewSessionBilling request.
 func (s *magmaServer) Start(ctx context.Context, req *magma.Session) (*magma.SessionResp, error) {
 	log.Logger.Info("Magma: Got Start request", zap.Any("request", req))
 
@@ -158,6 +161,7 @@ func newSessionBilling(ctx context.Context, req *magma.Session, acknowledgmentID
 	return nil
 }
 
+// Update forwards update request from Magma to Provider.Proxy with ForwardUsage request.
 func (s *magmaServer) Update(ctx context.Context, req *magma.UpdateReq) (*magma.SessionResp, error) {
 	log.Logger.Info("Magma: Got Update request.", zap.Any("request", req))
 
@@ -185,6 +189,8 @@ func (s *magmaServer) Update(ctx context.Context, req *magma.UpdateReq) (*magma.
 	return &magma.SessionResp{}, err
 }
 
+// Stop executes Magma.Update procedure.
+// NOTE: need to be modified.
 func (s magmaServer) Stop(ctx context.Context, req *magma.UpdateReq) (*magma.StopResp, error) {
 	log.Logger.Info("Magma: Got Stop request.", zap.Any("request", req))
 
