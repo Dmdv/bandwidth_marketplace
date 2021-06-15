@@ -37,4 +37,4 @@ proxy:
       min_upload_bmps: 10
 
 # in seconds
-grpc_server_timeout: 30
+grpc_server_timeout: 50
