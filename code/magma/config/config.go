@@ -20,6 +20,7 @@ type (
 		Handler Handler `yaml:"handler"`
 		HSS     HSS     `yaml:"hss"`
 		Logging Logging `yaml:"logging"`
+		IDMaps  IDMaps  `yaml:"id_maps"` // TODO: temp, need to find better solution
 	}
 
 	// Handler represents config options described in "handler" section of the config yaml file.
@@ -39,6 +40,11 @@ type (
 	// HSS must be a field of Config struct
 	HSS struct {
 		Users []string `yaml:"users"`
+	}
+
+	IDMaps struct {
+		Consumer map[string]string `yaml:"consumer"`
+		Provider map[string]string `yaml:"provider"`
 	}
 )
 

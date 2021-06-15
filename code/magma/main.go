@@ -71,7 +71,7 @@ func startGRPC(cfg *config.Config) {
 
 	timeout := time.Duration(cfg.GRPCServerTimeout) * time.Second
 	serv := grpc.NewServerWithMiddlewares(log.Logger, timeout)
-	grpc.RegisterGRPCServices(serv, cfg.ConsumerAddress, cfg.ProviderAddress)
+	grpc.RegisterGRPCServices(serv, cfg)
 
 	log.Logger.Info("GRPC server is preparing to be started.", zap.String("grps address", cfg.GRPCAddress))
 	errMsg := serv.Serve(listener).Error()

@@ -2,10 +2,8 @@ package grpc
 
 import (
 	"context"
-	"strconv"
 	"time"
 
-	"github.com/0chain/bandwidth_marketplace/code/core/crypto"
 	"github.com/0chain/bandwidth_marketplace/code/core/log"
 	"github.com/0chain/bandwidth_marketplace/code/pb/consumer"
 	"github.com/0chain/bandwidth_marketplace/code/pb/provider"
@@ -15,13 +13,14 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"magma/config"
 	"magma/consumer/hss"
 	cproxy "magma/consumer/proxy"
 	pproxy "magma/provider/proxy"
 )
 
-func RegisterGRPCServices(server *grpc.Server, preConfiguredConsumers, preConfiguredProviders string) {
-	magma.RegisterAccountingServer(server, newMagmaServer(preConfiguredConsumers, preConfiguredProviders))
+func RegisterGRPCServices(server *grpc.Server, cfg *config.Config) {
+	magma.RegisterAccountingServer(server, newMagmaServer(cfg))
 }
 
 type (
@@ -30,6 +29,8 @@ type (
 
 		consumerAddress string
 		providerAddress string
+
+		idMaps config.IDMaps
 	}
 )
 
@@ -38,10 +39,11 @@ var (
 	_ magma.AccountingServer = (*magmaServer)(nil)
 )
 
-func newMagmaServer(consumerAddress, providerAddress string) magma.AccountingServer {
+func newMagmaServer(cfg *config.Config) magma.AccountingServer {
 	return &magmaServer{
-		consumerAddress: consumerAddress,
-		providerAddress: providerAddress,
+		consumerAddress: cfg.ConsumerAddress,
+		providerAddress: cfg.ProviderAddress,
+		idMaps:          cfg.IDMaps,
 	}
 }
 
@@ -57,15 +59,14 @@ func (s *magmaServer) Start(ctx context.Context, req *magma.Session) (*magma.Ses
 
 	log.Logger.Info("Magma.Start: Consumer.HSS.VerifyUser successfully executed.")
 
-	sessionID := crypto.Hash(strconv.Itoa(int(time.Now().UnixNano()))) // TODO change on something better
-	acknID, err := notifyNewProvider(ctx, req, s.consumerAddress, sessionID)
+	acknID, err := notifyNewProvider(ctx, req, s.idMaps, s.consumerAddress)
 	if err != nil {
 		return nil, err
 	}
 
 	log.Logger.Info("Magma.Start: Consumer.Proxy.NotifyNewProvider successfully executed.")
 
-	if err := newSessionBilling(ctx, req, acknID, sessionID, s.providerAddress); err != nil {
+	if err := newSessionBilling(ctx, req, s.idMaps, acknID, s.providerAddress); err != nil {
 		return nil, err
 	}
 
@@ -104,7 +105,7 @@ func verifyUser(ctx context.Context, req *magma.Session, hssAddr string) error {
 //
 // It returns already configured status error with codes if error occurs while execution,
 // else returns Acknowledgment ID.
-func notifyNewProvider(ctx context.Context, req *magma.Session, proxyAddr, sessionID string) (string, error) {
+func notifyNewProvider(ctx context.Context, req *magma.Session, idMaps config.IDMaps, proxyAddr string) (string, error) {
 	cl, err := cproxy.Client(proxyAddr)
 	if err != nil {
 		msg := "can not connect to consumer Proxy while making NotifyNewProvider request"
@@ -114,9 +115,9 @@ func notifyNewProvider(ctx context.Context, req *magma.Session, proxyAddr, sessi
 	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 	nnpReq := consumer.NotifyNewProviderRequest{
-		SessID:        sessionID,
+		SessID:        req.GetSessionId(),
 		UserID:        req.GetName(),
-		ProviderID:    req.GetProviderId(),
+		ProviderID:    idMaps.Provider[req.GetProviderId()],
 		AccessPointID: req.GetProviderApn(),
 	}
 	resp, err := cl.NotifyNewProvider(ctx, &nnpReq)
@@ -136,7 +137,7 @@ func notifyNewProvider(ctx context.Context, req *magma.Session, proxyAddr, sessi
 // magma.ConnectRequest, session ID and Acknowledgment ID.
 //
 // It returns already configured status error with codes if error occurs while execution.
-func newSessionBilling(ctx context.Context, req *magma.Session, acknowledgmentID, sessionID, proxyAddr string) error {
+func newSessionBilling(ctx context.Context, req *magma.Session, idMaps config.IDMaps, acknowledgmentID, proxyAddr string) error {
 	cl, err := pproxy.Client(proxyAddr)
 	if err != nil {
 		msg := "can not connect to provider Proxy while making NewSessionBilling request"
@@ -146,9 +147,9 @@ func newSessionBilling(ctx context.Context, req *magma.Session, acknowledgmentID
 	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 	nsbReq := provider.NewSessionBillingRequest{
-		SessionID:        sessionID,
+		SessionID:        req.GetSessionId(),
 		UserID:           req.GetName(),
-		ConsumerID:       req.GetConsumerId(),
+		ConsumerID:       idMaps.Consumer[req.GetConsumerId()],
 		AccessPointID:    req.GetProviderApn(),
 		AcknowledgmentID: acknowledgmentID,
 	}
