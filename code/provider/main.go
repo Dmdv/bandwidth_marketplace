@@ -28,7 +28,7 @@ import (
 func main() {
 	cfg := config.Read()
 	cfg.CLConfig = config.ExtractCommandLineConfigs()
-	log.InitLogging(cfg.Development(), cfg.CLConfig.LogDir, cfg.CLConfig.LogDir)
+	log.InitLogging(cfg.Development(), cfg.CLConfig.LogDir, cfg.Logging.Level)
 
 	selfNode := createSelfNode(cfg.CLConfig)
 
