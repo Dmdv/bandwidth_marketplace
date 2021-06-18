@@ -1,7 +1,7 @@
 #!/bin/sh
   
-for i in $(seq 1 6)
+for i in $(seq 1 6);
 do
-  rm docker.local/consumer$i/log/*
+  rm -r docker.local/consumer$i/*
 done
 

@@ -2,5 +2,5 @@
 
 for i in $(seq 1 6)
 do
-  rm docker.local/provider$i/log/*
+  rm -r docker.local/provider$i/*
 done
