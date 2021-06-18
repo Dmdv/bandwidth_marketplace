@@ -92,7 +92,7 @@ func respondTerms(providerID string) (*provider.Terms, error) {
 	params := map[string]string{
 		"provider_id": providerID,
 	}
-	res, err := transaction.MakeSCRestAPICall(transaction.MagmaSCAddress, "/getProviderTerms", params)
+	res, err := transaction.MakeSCRestAPICall(transaction.MagmaSCAddress, transaction.ProviderTermsRP, params)
 	if err != nil {
 		return nil, err
 	}

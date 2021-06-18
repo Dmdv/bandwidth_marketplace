@@ -28,6 +28,10 @@ const (
 	// VerifyAcknowledgmentAcceptedRP represents MagmaSC relative path.
 	// Used to verify accepting Provider's terms by Consumer.
 	VerifyAcknowledgmentAcceptedRP = "/acknowledgmentAcceptedVerify"
+
+	// ProviderTermsRP represents MagmaSC relative path.
+	// Used for getting provider's terms.
+	ProviderTermsRP = "/providerTerms"
 )
 
 type (
