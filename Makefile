@@ -84,3 +84,45 @@ generate:
 	$(proto_path)/pb/provider/proto/*.proto
 
 	@echo "Compiling completed."
+
+cons-refresh-start: cons-clean-init cons-build-start
+
+cons-build-start: cons-build cons-start
+
+cons-build:
+	@docker.local/bin/consumer_build.sh
+
+cons-start:
+	@cd docker.local/consumer$(CONSUMER_ID) && ../bin/consumer_start_bls.sh
+
+cons-clean-init:
+	@docker.local/bin/consumer_clean.sh
+	@docker.local/bin/consumer_init.sh
+
+prov-refresh-start: prov-clean-init prov-build-start
+
+prov-build-start: prov-build prov-start
+
+prov-build:
+	@docker.local/bin/provider_build.sh
+
+prov-start:
+	@cd docker.local/provider$(PROVIDER_ID) && ../bin/provider_start_bls.sh
+
+prov-clean-init:
+	@docker.local/bin/provider_clean.sh
+	@docker.local/bin/provider_init.sh
+
+magma-refresh-start: magma-clean-init magma-build-start
+
+magma-build-start: magma-build magma-start
+
+magma-build:
+	@docker.local/bin/magma_build.sh
+
+magma-start:
+	@cd docker.local/magma && ../bin/magma_start.sh
+
+magma-clean-init:
+	@docker.local/bin/magma_clean.sh
+	@docker.local/bin/magma_init.sh
