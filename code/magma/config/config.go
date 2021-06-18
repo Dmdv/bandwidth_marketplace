@@ -18,7 +18,6 @@ type (
 		ProviderAddress string `yaml:"provider_address"`
 
 		Handler Handler `yaml:"handler"`
-		HSS     HSS     `yaml:"hss"`
 		Logging Logging `yaml:"logging"`
 		IDMaps  IDMaps  `yaml:"id_maps"` // TODO: temp, need to find better solution
 	}
@@ -34,12 +33,6 @@ type (
 	Logging struct {
 		Level string `yaml:"level"`
 		Dir   string `yaml:"dir"`
-	}
-
-	// HSS represents config options described in "hss" section of the config yaml file.
-	// HSS must be a field of Config struct
-	HSS struct {
-		Users []string `yaml:"users"`
 	}
 
 	IDMaps struct {
