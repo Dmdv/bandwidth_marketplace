@@ -27,10 +27,10 @@ type (
 	magmaServer struct {
 		magma.UnimplementedAccountingServer
 
-		consumerAddress string
-		providerAddress string
-
-		idMaps config.IDMaps
+		consumerAddress      string
+		providerAddress      string
+		defaultClientTimeout time.Duration
+		idMaps               config.IDMaps
 	}
 )
 
@@ -41,9 +41,10 @@ var (
 
 func newMagmaServer(cfg *config.Config) magma.AccountingServer {
 	return &magmaServer{
-		consumerAddress: cfg.ConsumerAddress,
-		providerAddress: cfg.ProviderAddress,
-		idMaps:          cfg.IDMaps,
+		consumerAddress:      cfg.ConsumerAddress,
+		providerAddress:      cfg.ProviderAddress,
+		defaultClientTimeout: time.Duration(cfg.GRPCDefaultClientTimeout) * time.Second,
+		idMaps:               cfg.IDMaps,
 	}
 }
 
@@ -59,14 +60,14 @@ func (s *magmaServer) Start(ctx context.Context, req *magma.Session) (*magma.Ses
 
 	log.Logger.Info("Magma.Start: Consumer.HSS.VerifyUser successfully executed.")
 
-	acknID, err := notifyNewProvider(ctx, req, s.idMaps, s.consumerAddress)
+	acknID, err := s.notifyNewProvider(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
 	log.Logger.Info("Magma.Start: Consumer.Proxy.NotifyNewProvider successfully executed.")
 
-	if err := newSessionBilling(ctx, req, s.idMaps, acknID, s.providerAddress); err != nil {
+	if err := s.newSessionBilling(ctx, req, acknID); err != nil {
 		return nil, err
 	}
 
@@ -105,19 +106,19 @@ func verifyUser(ctx context.Context, req *magma.Session, hssAddr string) error {
 //
 // It returns already configured status error with codes if error occurs while execution,
 // else returns Acknowledgment ID.
-func notifyNewProvider(ctx context.Context, req *magma.Session, idMaps config.IDMaps, proxyAddr string) (string, error) {
-	cl, err := cproxy.Client(proxyAddr)
+func (s *magmaServer) notifyNewProvider(ctx context.Context, req *magma.Session) (string, error) {
+	cl, err := cproxy.Client(s.consumerAddress)
 	if err != nil {
 		msg := "can not connect to consumer Proxy while making NotifyNewProvider request"
 		return "", status.Error(codes.Internal, msg)
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, s.defaultClientTimeout)
 	defer cancel()
 	nnpReq := consumer.NotifyNewProviderRequest{
 		SessID:        req.GetSessionId(),
 		UserID:        req.GetName(),
-		ProviderID:    idMaps.Provider[req.GetProviderId()],
+		ProviderID:    s.idMaps.Provider[req.GetProviderId()],
 		AccessPointID: req.GetProviderApn(),
 	}
 	resp, err := cl.NotifyNewProvider(ctx, &nnpReq)
@@ -137,19 +138,19 @@ func notifyNewProvider(ctx context.Context, req *magma.Session, idMaps config.ID
 // magma.ConnectRequest, session ID and Acknowledgment ID.
 //
 // It returns already configured status error with codes if error occurs while execution.
-func newSessionBilling(ctx context.Context, req *magma.Session, idMaps config.IDMaps, acknowledgmentID, proxyAddr string) error {
-	cl, err := pproxy.Client(proxyAddr)
+func (s *magmaServer) newSessionBilling(ctx context.Context, req *magma.Session, acknowledgmentID string) error {
+	cl, err := pproxy.Client(s.providerAddress)
 	if err != nil {
 		msg := "can not connect to provider Proxy while making NewSessionBilling request"
 		return status.Error(codes.Internal, msg)
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, s.defaultClientTimeout)
 	defer cancel()
 	nsbReq := provider.NewSessionBillingRequest{
 		SessionID:        req.GetSessionId(),
 		UserID:           req.GetName(),
-		ConsumerID:       idMaps.Consumer[req.GetConsumerId()],
+		ConsumerID:       s.idMaps.Consumer[req.GetConsumerId()],
 		AccessPointID:    req.GetProviderApn(),
 		AcknowledgmentID: acknowledgmentID,
 	}
@@ -178,7 +179,7 @@ func (s *magmaServer) Update(ctx context.Context, req *magma.UpdateReq) (*magma.
 		OctetsOut:   req.GetOctetsOut(),
 		SessionTime: req.GetSessionTime(),
 	}
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, s.defaultClientTimeout)
 	defer cancel()
 	if _, err = cl.ForwardUsage(ctx, &fuReq); err != nil {
 		f := "requesting consumer Proxy with NotifyNewProvider request failed with err: %v"

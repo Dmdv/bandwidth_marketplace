@@ -10,9 +10,10 @@ import (
 type (
 	// Config represents configs stores in Path.
 	Config struct {
-		Port              int    `yaml:"port"`
-		GRPCAddress       string `yaml:"grpc_address"`
-		GRPCServerTimeout int    `yaml:"grpc_server_timeout"` // in seconds
+		Port                     int    `yaml:"port"`
+		GRPCAddress              string `yaml:"grpc_address"`
+		GRPCServerTimeout        int    `yaml:"grpc_server_timeout"`         // in seconds
+		GRPCDefaultClientTimeout int    `yaml:"grpc_client_default_timeout"` // in seconds
 
 		ConsumerAddress string `yaml:"consumer_address"`
 		ProviderAddress string `yaml:"provider_address"`
