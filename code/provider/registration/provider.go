@@ -24,7 +24,7 @@ import (
 func Setup(cfg *config.Config, wallet string) {
 	var logName = cfg.CLConfig.LogDir + "/zsdk.log"
 	zcncore.SetLogFile(logName, false)
-	zcncore.SetLogLevel(intLevelFromStr(cfg.Logging.Level))
+	zcncore.SetLogLevel(logLevelFromStr(cfg.Logging.Level))
 	if err := zcncore.InitZCNSDK(cfg.ServerChain.BlockWorker, cfg.ServerChain.SignatureScheme); err != nil {
 		errors.ExitErr("error while init zcn sdk", err, 2)
 	}

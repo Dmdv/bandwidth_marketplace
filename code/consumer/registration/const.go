@@ -4,8 +4,8 @@ import (
 	"github.com/0chain/gosdk/core/logger"
 )
 
-// intLevelFromStr converts string log level to gosdk logger level int value.
-func intLevelFromStr(level string) int {
+// logLevelFromStr converts string log level to gosdk logger level int value.
+func logLevelFromStr(level string) int {
 	switch level {
 	case "none":
 		return logger.NONE
