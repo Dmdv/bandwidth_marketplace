@@ -7,27 +7,27 @@ const (
 
 	// GetAllConsumersRP represents MagmaSC relative path.
 	// Used to list all registered in the blockchain rest points.
-	GetAllConsumersRP = "/getAllConsumers"
+	GetAllConsumersRP = "/allConsumers"
 
 	// RegisterConsumerFuncName represents MagmaSC relative path.
 	// Used to register bandwidth-marketplace's node.
-	RegisterConsumerFuncName = "register_consumer"
+	RegisterConsumerFuncName = "consumer_register"
 
 	// AcceptTermsFuncName represents MagmaSC function.
 	// Used to confirm bandwidth-marketplace's acceptance of provider service terms.
-	AcceptTermsFuncName = "accept_terms"
+	AcceptTermsFuncName = "consumer_accept_terms"
 
 	// RegisterProviderFuncName represents MagmaSC relative path.
 	// Used to register bandwidth-marketplace's node.
-	RegisterProviderFuncName = "register_provider"
+	RegisterProviderFuncName = "provider_register"
 
 	// GetAllProvidersRP represents MagmaSC relative path.
 	// Used to list all registered in the blockchain rest points.
-	GetAllProvidersRP = "/getAllProviders"
+	GetAllProvidersRP = "/allProviders"
 
 	// VerifyAcknowledgmentAcceptedRP represents MagmaSC relative path.
 	// Used to verify accepting Provider's terms by Consumer.
-	VerifyAcknowledgmentAcceptedRP = "/verifyAcknowledgmentAccepted"
+	VerifyAcknowledgmentAcceptedRP = "/acknowledgmentAcceptedVerify"
 )
 
 type (
