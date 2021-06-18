@@ -9,5 +9,4 @@ import (
 
 func RegisterGRPCServices(server *grpc.Server, cfg *config.Config) {
 	provider.RegisterProxyServer(server, newProxyServer())
-	provider.RegisterAccessPointServer(server, newAccessPointServer(cfg))
 }
