@@ -13,6 +13,8 @@
 
 - [Miscellaneous](#miscellaneous) - [Cleanup](#cleanup)
 
+- [Metrics](#metrics)
+
 ## Initial setup
 
 ### Directory setup
@@ -22,27 +24,19 @@ Go to the `git/bandwidth-marketplace` directory and run the following commands:
 - For setting up Consumer:
 
 ```
-./docker.local/bin/consumer_init.sh
+make cons-clean-init
 ```
 
 - For setting up Provider:
 
 ```
-./docker.local/bin/provider_init.sh
+make prov-clean-init
 ```
 
-You also can clean logs by running the following commands:
-
-- For Consumer:
+- For setting up Magma
 
 ```
-./docker.local/bin/consumer_clean.sh
-```
-
-- For Provider:
-
-```
-./docker.local/bin/provider_clean.sh
+make magma-clean-init
 ```
 
 ## Building and starting nodes
@@ -60,13 +54,19 @@ docker network create --driver=bridge --subnet=198.18.0.0/15 --gateway=198.18.0.
 - For building Consumer:
 
 ```
-./docker.local/bin/consumer_build.sh
+make cons-build
 ```
 
 - For building Provider:
 
 ```
-./docker.local/bin/provider_build.sh
+make prov-build
+```
+
+- For building Magma:
+
+```
+make magma-build
 ```
 
 **_Note: you can skip building step if you want to use existing docker images._**
@@ -76,19 +76,19 @@ docker network create --driver=bridge --subnet=198.18.0.0/15 --gateway=198.18.0.
 - For starting consumer:
 
 ```
-cd docker.local/consumer1
-```
-```
-../bin/consumer_start_bls.sh
+CONSUMER_ID=N make cons-start
 ```
 
 - For starting provider:
 
 ```
-cd docker.local/provider1
+PROVIDER_ID=N make prov-start
 ```
+
+- For starting magma:
+
 ```
-../bin/provider_start_bls.sh
+make magma-start
 ```
 
 ## Connect to other network

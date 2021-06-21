@@ -2,16 +2,19 @@ version: "3"
 services:
   postgres:
     image: postgres:11
+    environment:
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - ./provider${PROVIDER}/data/postgresql:/var/lib/postgresql/data
     networks:
       default:
-    ports:
-      - "543${PROVIDER}:5433"
   postgres-post:
     image: postgres:11
     environment:
-      POSTGRES_PORT: 5433
+      POSTGRES_PORT: 5432
       POSTGRES_HOST: postgres
       POSTGRES_USER: postgres
     volumes:
@@ -21,28 +24,57 @@ services:
     links:
       - postgres:postgres
 
+  pre-prometheus:
+    image: busybox
+    volumes:
+      - ./provider${PROVIDER}/data/prometheus:/prometheus/data
+    command: chmod -R 777 /prometheus/data/
+
+  prometheus:
+    image: prom/prometheus:v2.27.1
+    depends_on:
+      - pre-prometheus
+    ports:
+      - 908${PROVIDER}:908${PROVIDER}
+    volumes:
+      - ./provider${PROVIDER}/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./provider${PROVIDER}/data/prometheus:/prometheus/data/
+    command: --web.listen-address=":908${PROVIDER}" --config.file="/etc/prometheus/prometheus.yml"
+    networks:
+      default:
+      testnet0:
+        ipv4_address: 198.18.0.5${PROVIDER}
+
   provider:
     image: provider
+    depends_on:
+      - postgres
+      - postgres-post
+      - prometheus
+    environment:
+      - DOCKER= true
     volumes:
       - ../config:/provider/config
       - ./provider${PROVIDER}/files:/provider/files
       - ./provider${PROVIDER}/data:/provider/data
       - ./provider${PROVIDER}/log:/provider/log
-      - ./keys_config/provider:/provider/keys_config
+      - ./keys_config/provider:/provider/keys_config/provider
+      - ./provider${PROVIDER}/data/tmp:/tmp
     ports:
-      - "506${PROVIDER}:506${PROVIDER}"
+      - "507${PROVIDER}:507${PROVIDER}"
       - "704${PROVIDER}:704${PROVIDER}"
-    command: ./bin/provider --port 506${PROVIDER} --grpc_port 704${PROVIDER} --hostname localhost --deployment_mode 0 --keys_file keys_config/provider/pnode${PROVIDER}_keys.txt --log_dir /provider/log --db_dir /provider/data
+    command: ./bin/provider --port 507${PROVIDER} --grpc_port 704${PROVIDER} --hostname localhost --deployment_mode 0 --keys_file keys_config/provider/keys${PROVIDER}.txt --log_dir /provider/log --db_dir /provider/data
     networks:
       default:
       testnet0:
-        ipv4_address: 198.18.1.1${PROVIDER}
+        ipv4_address: 198.18.0.1${PROVIDER}
 
 networks:
   default:
     driver: bridge
   testnet0:
     external: true
+
 volumes:
   data:
   config:

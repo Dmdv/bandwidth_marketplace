@@ -2,37 +2,69 @@ version: "3"
 services:
   postgres:
     image: postgres:11
+    environment:
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - ./consumer${CONSUMER}/data/postgresql:/var/lib/postgresql/data
     networks:
       default:
-    ports:
-      - "543${CONSUMER}:5434"
   postgres-post:
-      image: postgres:11
-      environment:
-        POSTGRES_PORT: 5434
-        POSTGRES_HOST: postgres
-        POSTGRES_USER: postgres
-      volumes:
-        - ../bin:/consumer/bin
-        - ../sql/consumer:/consumer/sql
-      command: bash /consumer/bin/cons-postgres-entrypoint.sh
-      links:
-        - postgres:postgres
+    image: postgres:11
+    environment:
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: postgres
+    volumes:
+      - ../bin:/consumer/bin
+      - ../sql/consumer:/consumer/sql
+    command: bash /consumer/bin/cons-postgres-entrypoint.sh
+    links:
+      - postgres:postgres
+
+  pre-prometheus:
+    image: busybox
+    volumes:
+      - ./consumer${CONSUMER}/data/prometheus:/prometheus/data
+    command: chmod -R 777 /prometheus/data/
+
+  prometheus:
+    image: prom/prometheus:v2.27.1
+    depends_on:
+      - pre-prometheus
+    ports:
+      - 907${CONSUMER}:907${CONSUMER}
+    volumes:
+      - ./consumer${CONSUMER}/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./consumer${CONSUMER}/data/prometheus:/prometheus/data
+    command: --web.listen-address=":907${CONSUMER}" --config.file="/etc/prometheus/prometheus.yml"
+    networks:
+      default:
+      testnet0:
+        ipv4_address: 198.18.0.6${CONSUMER}
 
   consumer:
     image: consumer
+    depends_on:
+      - prometheus
+      - pre-prometheus
+      - postgres
+      - postgres-post
+    environment:
+      - DOCKER= true
     volumes:
       - ../config:/consumer/config
       - ./consumer${CONSUMER}/files:/consumer/files
       - ./consumer${CONSUMER}/data:/consumer/data
       - ./consumer${CONSUMER}/log:/consumer/log
       - ./keys_config/consumer:/consumer/keys_config/consumer
+      - ./consumer${CONSUMER}/data/tmp:/tmp
     ports:
       - "505${CONSUMER}:505${CONSUMER}"
       - "703${CONSUMER}:703${CONSUMER}"
-    command: ./bin/consumer --port 505${CONSUMER} --grpc_port 703${CONSUMER} --hostname localhost --deployment_mode 0 --keys_file keys_config/consumer/cnode${CONSUMER}_keys.txt --log_dir /consumer/log --db_dir /consumer/data
+    command: ./bin/consumer --port 505${CONSUMER} --grpc_port 703${CONSUMER} --hostname localhost --deployment_mode 0 --keys_file keys_config/consumer/keys${CONSUMER}.txt --log_dir /consumer/log --db_dir /consumer/data
     networks:
       default:
       testnet0:
@@ -43,6 +75,7 @@ networks:
     driver: bridge
   testnet0:
     external: true
+
 volumes:
   data:
   config:

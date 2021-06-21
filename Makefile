@@ -93,7 +93,7 @@ cons-build:
 	@docker.local/bin/consumer_build.sh
 
 cons-start:
-	@cd docker.local/consumer$(CONSUMER_ID) && ../bin/consumer_start_bls.sh
+	@cd docker.local/consumer$(CONSUMER_ID) && ../bin/consumer_start.sh
 
 cons-clean-init:
 	@docker.local/bin/consumer_clean.sh
@@ -107,7 +107,7 @@ prov-build:
 	@docker.local/bin/provider_build.sh
 
 prov-start:
-	@cd docker.local/provider$(PROVIDER_ID) && ../bin/provider_start_bls.sh
+	@cd docker.local/provider$(PROVIDER_ID) && ../bin/provider_start.sh
 
 prov-clean-init:
 	@docker.local/bin/provider_clean.sh
