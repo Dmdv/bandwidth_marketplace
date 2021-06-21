@@ -14,6 +14,7 @@ import (
 	"github.com/0chain/bandwidth_marketplace/code/core/log"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"go.uber.org/zap"
 
 	"magma/config"
@@ -72,6 +73,9 @@ func startGRPC(cfg *config.Config) {
 	timeout := time.Duration(cfg.GRPCServerTimeout) * time.Second
 	serv := grpc.NewServerWithMiddlewares(log.Logger, timeout)
 	grpc.RegisterGRPCServices(serv, cfg)
+
+	// register grpc server metrics
+	grpc_prometheus.Register(serv)
 
 	log.Logger.Info("GRPC server is preparing to be started.", zap.String("grps address", cfg.GRPCAddress))
 	errMsg := serv.Serve(listener).Error()

@@ -9,6 +9,7 @@ import (
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
@@ -50,11 +51,13 @@ func NewServerWithMiddlewares(logger *zap.Logger, timeout time.Duration) *grpc.S
 		grpc.ChainStreamInterceptor(
 			grpc_zap.StreamServerInterceptor(logger),
 			grpc_recovery.StreamServerInterceptor(),
+			grpc_prometheus.StreamServerInterceptor,
 		),
 		grpc.ChainUnaryInterceptor(
 			grpc_zap.UnaryServerInterceptor(logger),
 			unaryDatabaseTransactionInjector(),
 			grpc_recovery.UnaryServerInterceptor(),
+			grpc_prometheus.UnaryServerInterceptor,
 			unaryTimeoutInterceptor(timeout), // should always be the last, to be "innermost"
 		),
 	)

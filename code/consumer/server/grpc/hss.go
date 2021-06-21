@@ -26,9 +26,9 @@ func newHSSServerFromConfig() consumer.HSSServer {
 
 // VerifyUser checks if the user with the provided id belongs to configured users.
 func (s hssServer) VerifyUser(_ context.Context, req *consumer.VerifyUserRequest) (*consumer.VerifyUserResponse, error) {
-	log.Logger.Info("HSS: Got VerifyUser request.", zap.Any("request", req))
+	log.Logger.Debug("HSS: Got VerifyUser request.", zap.Any("request", req))
 
-	log.Logger.Info("HSS: Handling VerifyUser successfully ended.")
+	log.Logger.Debug("HSS: Handling VerifyUser successfully ended.")
 
 	return &consumer.VerifyUserResponse{}, nil
 }

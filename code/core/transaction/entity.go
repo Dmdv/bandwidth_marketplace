@@ -111,7 +111,7 @@ func (t *Transaction) Verify() error {
 	}
 
 	t.wg.Add(1)
-	err := t.scheme.Verify()
+	err := t.scheme.Verify() // TODO need to be refactored, change wait group on channel
 	if err != nil {
 		t.wg.Done()
 		return err

@@ -24,8 +24,34 @@ services:
     links:
       - postgres:postgres
 
+  pre-prometheus:
+    image: busybox
+    volumes:
+      - ./consumer${CONSUMER}/data/prometheus:/prometheus/data
+    command: chmod -R 777 /prometheus/data/
+
+  prometheus:
+    image: prom/prometheus:v2.27.1
+    depends_on:
+      - pre-prometheus
+    ports:
+      - 907${CONSUMER}:907${CONSUMER}
+    volumes:
+      - ./consumer${CONSUMER}/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./consumer${CONSUMER}/data/prometheus:/prometheus/data
+    command: --web.listen-address=":907${CONSUMER}" --config.file="/etc/prometheus/prometheus.yml"
+    networks:
+      default:
+      testnet0:
+        ipv4_address: 198.18.0.6${CONSUMER}
+
   consumer:
     image: consumer
+    depends_on:
+      - prometheus
+      - pre-prometheus
+      - postgres
+      - postgres-post
     environment:
       - DOCKER= true
     volumes:

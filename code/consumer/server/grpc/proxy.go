@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"consumer/config"
+	"consumer/metrics"
 )
 
 type (
@@ -21,6 +22,8 @@ type (
 
 		cfg          *config.Proxy
 		magmaAddress string
+
+		metrics *metrics.ProxyService
 	}
 )
 
@@ -33,20 +36,20 @@ func newProxyServer(cfg config.Proxy, magmaAddress string) consumer.ProxyServer 
 	return &proxyServer{
 		cfg:          &cfg,
 		magmaAddress: magmaAddress,
+		metrics:      metrics.NewProxyServiceMetrics(),
 	}
 }
 
 // NotifyNewProvider starts picking provider process and returns consumer.ChangeProviderResponse.
-func (p proxyServer) NotifyNewProvider(_ context.Context, request *consumer.NotifyNewProviderRequest) (*consumer.ChangeProviderResponse, error) {
-	log.Logger.Info("Proxy: Got NotifyNewProvider request", zap.Any("request", request))
+func (p proxyServer) NotifyNewProvider(_ context.Context, req *consumer.NotifyNewProviderRequest) (*consumer.ChangeProviderResponse, error) {
+	log.Logger.Debug("Proxy: Got NotifyNewProvider req", zap.Any("req", req))
 
-	acknID, err := pickProvider(request, p.cfg.Terms)
+	acknID, err := p.pickProvider(req, p.cfg.Terms)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Logger.Info("Proxy: Handling NotifyNewProvider successfully ended.")
-
+	log.Logger.Debug("Proxy: Handling NotifyNewProvider successfully ended.")
 	return &consumer.ChangeProviderResponse{Status: consumer.ChangeStatus_Success, AcknowledgmentID: acknID}, nil
 }
 
@@ -57,33 +60,32 @@ func (p proxyServer) NotifyNewProvider(_ context.Context, request *consumer.Noti
 //
 // If an error occurs while executing, Magma service with provided address will be notified with grpc.Status_Failed.
 // If executing will be ended successfully, Magma will be notified with grpc.Status_Success.
-func pickProvider(req *consumer.NotifyNewProviderRequest, cfg config.Terms) (string, error) {
-	log.Logger.Info("Got notifyNewProvider request, trying to pick provider ...")
+func (p proxyServer) pickProvider(req *consumer.NotifyNewProviderRequest, cfg config.Terms) (string, error) {
+	log.Logger.Debug("Got notifyNewProvider request, trying to pick provider ...")
 
 	// extract terms from block workers by executing sc api
 	terms, err := respondTerms(req.ProviderID)
 	if err != nil {
 		log.Logger.Error("Responding terms failed", zap.Error(err))
-
 		return "", status.Errorf(codes.Unknown, "responding terms of provider failed with err: %v", err)
 	}
 
 	if !cfg.Validate(terms) {
+		p.metrics.UpdateTermsDeclinedMetric(req.GetUserID())
 		log.Logger.Error("Terms is invalid")
-
 		return "", status.Error(codes.InvalidArgument, "terms can not be picked cause of configured requirements")
 	}
 
 	// accept terms
 	ackn, err := provider.ExecuteAcceptTerms(req.ProviderID, req.AccessPointID, req.SessID)
 	if err != nil {
+		p.metrics.UpdateTermsDeclinedMetric(req.GetUserID())
 		log.Logger.Error("Accepting terms failed", zap.Error(err))
-
 		return "", status.Errorf(codes.Unknown, "accepting terms of provider failed with err: %v", err)
 	}
 
-	log.Logger.Info("Picking provider ended successfully", zap.Any("acknowledgment", ackn))
-
+	p.metrics.UpdateTermsAcceptedMetric(req.GetUserID())
+	log.Logger.Debug("Picking provider ended successfully", zap.Any("acknowledgment", ackn))
 	return ackn.ID, nil
 }
 

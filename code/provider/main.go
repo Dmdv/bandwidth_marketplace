@@ -17,6 +17,7 @@ import (
 	"github.com/0chain/bandwidth_marketplace/code/core/node"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"go.uber.org/zap"
 
 	"provider/config"
@@ -110,6 +111,9 @@ func startGRPC(cfg *config.Config) {
 	timeout := time.Duration(cfg.GRPCServerTimeout) * time.Second
 	server := grpc.NewServerWithMiddlewares(log.Logger, timeout)
 	grpc.RegisterGRPCServices(server, cfg)
+
+	// register grpc server metrics
+	grpc_prometheus.Register(server)
 
 	errMsg := server.Serve(listener).Error()
 	log.Logger.Fatal(errMsg)

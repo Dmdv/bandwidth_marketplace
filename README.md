@@ -140,3 +140,61 @@ docker stop $(docker ps -a -q)
 ```
 docker rm $(docker ps -a -q)
 ```
+
+## Metrics
+
+For metrics collecting Prometheus is used.
+See [docs](https://prometheus.io/download/) for more details.
+
+For collecting metrics about GRPC processes used default:
+https://github.com/grpc-ecosystem/go-grpc-prometheus
+
+### Magma
+
+Address of the Prometheus strongly configured in `git/bandwidth-marketplace/magma-b0docker-compose.yml` file. 
+The Prometheus server is running at:
+`http://localhost:9079`.
+
+Supported metrics:
+
+`magma_session_data_uploaded` - used for collecting info about all data, uploaded by user, for each session.
+Labels: `session_id`.
+
+`magma_session_data_downloaded` - used for collecting info about all data, downloaded by user, for each session.
+Labels: `session_id`.
+
+`magma_session_started` - used for counts all started sessions.
+
+`magma_session_stopped` - used for counts all stopped sessions. 
+
+### Consumer
+
+Address of the Prometheus strongly configured in `git/bandwidth-marketplace/cons-b0docker-compose.yml` file. 
+The Prometheus server is running at:
+`http://localhost:907${CONSUMER_INDEX}`.
+
+Supported metrics:
+
+`proxy_terms_accepted` - used for counts all accepted terms.
+Labels: `user_id`.
+
+`proxy_terms_declined` - used for counts all declined terms.
+Labels: `user_id`.
+
+### Provider
+
+Address of Prometheus strongly configured in `git/bandwidth-marketplace/prov-b0docker-compose.yml` file. 
+The Prometheus server is running at:
+`http://localhost:908${PROVIDER_INDEX}`.
+
+Supported metrics:
+
+`proxy_acknowledgment_verified` - used for counts all verified acknowledgments.
+
+`proxy_acknowledgment_unverified` - used for counts all unverified acknowledgments.
+
+`proxy_session_data_uploaded` - used for collecting info about all data, uploaded by users.
+Labels: `session_id`.
+
+`proxy_session_data_downloaded` - used for collecting info about all data, downloaded by users.
+Labels: `session_id`.

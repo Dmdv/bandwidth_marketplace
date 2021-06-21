@@ -1,0 +1,6 @@
+scrape_configs:
+  - job_name: consumer
+    scrape_interval: 10s
+    static_configs:
+      # do not edit target section, it will be configured automatically for each node
+      - targets:

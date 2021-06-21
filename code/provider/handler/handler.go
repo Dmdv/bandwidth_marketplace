@@ -11,12 +11,14 @@ import (
 	"github.com/0chain/bandwidth_marketplace/code/core/node"
 	"github.com/0chain/gosdk/zcncore"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
 )
 
 // SetupHandlers sets up the necessary API end points.
 func SetupHandlers(r *mux.Router) {
 	r.HandleFunc("/", HomePageHandler)
+	r.Handle("/metrics", promhttp.Handler())
 }
 
 // HomePageHandler provides basic info when accessing the home page of the server.

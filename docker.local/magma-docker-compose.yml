@@ -1,5 +1,27 @@
 version: "3"
+
 services:
+  pre-prometheus:
+    image: busybox
+    volumes:
+      - ./magma/data/prometheus:/prometheus/data
+    command: chmod -R 777 /prometheus/data/
+
+  prometheus:
+    image: prom/prometheus:v2.27.1
+    depends_on:
+      - pre-prometheus
+    ports:
+      - 9079:9079
+    volumes:
+      - ../config/magma-prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./magma/data/prometheus/:/prometheus/data/
+    command: --web.listen-address=":9079" --config.file="/etc/prometheus/prometheus.yml"
+    networks:
+      default:
+      testnet0:
+        ipv4_address: 198.18.0.19
+
   magma:
     image: magma
     environment:

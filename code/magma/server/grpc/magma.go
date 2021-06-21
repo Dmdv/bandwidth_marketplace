@@ -16,6 +16,7 @@ import (
 	"magma/config"
 	"magma/consumer/hss"
 	cproxy "magma/consumer/proxy"
+	"magma/metrics"
 	pproxy "magma/provider/proxy"
 )
 
@@ -31,6 +32,8 @@ type (
 		providerAddress      string
 		defaultClientTimeout time.Duration
 		idMaps               config.IDMaps
+
+		metrics *metrics.MagmaService
 	}
 )
 
@@ -45,6 +48,7 @@ func newMagmaServer(cfg *config.Config) magma.AccountingServer {
 		providerAddress:      cfg.ProviderAddress,
 		defaultClientTimeout: time.Duration(cfg.GRPCDefaultClientTimeout) * time.Second,
 		idMaps:               cfg.IDMaps,
+		metrics:              metrics.NewMagmaServiceMetrics(),
 	}
 }
 
@@ -52,29 +56,26 @@ func newMagmaServer(cfg *config.Config) magma.AccountingServer {
 // notifies Consumer.Proxy with NotifyNewProvider request
 // and notifies Provider.Proxy with NewSessionBilling request.
 func (s *magmaServer) Start(ctx context.Context, req *magma.Session) (*magma.SessionResp, error) {
-	log.Logger.Info("Magma: Got Start request", zap.Any("request", req))
+	log.Logger.Debug("Magma: Got Start request", zap.Any("request", req))
 
 	if err := verifyUser(ctx, req, s.consumerAddress); err != nil {
 		return nil, err
 	}
-
-	log.Logger.Info("Magma.Start: Consumer.HSS.VerifyUser successfully executed.")
+	log.Logger.Debug("Magma.Start: Consumer.HSS.VerifyUser successfully executed.")
 
 	acknID, err := s.notifyNewProvider(ctx, req)
 	if err != nil {
 		return nil, err
 	}
-
-	log.Logger.Info("Magma.Start: Consumer.Proxy.NotifyNewProvider successfully executed.")
+	log.Logger.Debug("Magma.Start: Consumer.Proxy.NotifyNewProvider successfully executed.")
 
 	if err := s.newSessionBilling(ctx, req, acknID); err != nil {
 		return nil, err
 	}
+	log.Logger.Debug("Magma.Start: Provider.Proxy.NewSessionBilling successfully executed.")
 
-	log.Logger.Info("Magma.Start: Provider.Proxy.NewSessionBilling successfully executed.")
-
-	log.Logger.Info("Magma: Handling Start successfully ended.")
-
+	s.metrics.IncSessionStarted()
+	log.Logger.Debug("Magma: Handling Start successfully ended.")
 	return &magma.SessionResp{}, nil
 }
 
@@ -117,7 +118,7 @@ func (s *magmaServer) notifyNewProvider(ctx context.Context, req *magma.Session)
 	defer cancel()
 	nnpReq := consumer.NotifyNewProviderRequest{
 		SessID:        req.GetSessionId(),
-		UserID:        req.GetName(),
+		UserID:        req.GetIMSI(),
 		ProviderID:    s.idMaps.Provider[req.GetProviderId()],
 		AccessPointID: req.GetProviderApn(),
 	}
@@ -149,7 +150,7 @@ func (s *magmaServer) newSessionBilling(ctx context.Context, req *magma.Session,
 	defer cancel()
 	nsbReq := provider.NewSessionBillingRequest{
 		SessionID:        req.GetSessionId(),
-		UserID:           req.GetName(),
+		UserID:           req.GetIMSI(),
 		ConsumerID:       s.idMaps.Consumer[req.GetConsumerId()],
 		AccessPointID:    req.GetProviderApn(),
 		AcknowledgmentID: acknowledgmentID,
@@ -165,7 +166,7 @@ func (s *magmaServer) newSessionBilling(ctx context.Context, req *magma.Session,
 
 // Update forwards update request from Magma to Provider.Proxy with ForwardUsage request.
 func (s *magmaServer) Update(ctx context.Context, req *magma.UpdateReq) (*magma.SessionResp, error) {
-	log.Logger.Info("Magma: Got Update request.", zap.Any("request", req))
+	log.Logger.Debug("Magma: Got Update request.", zap.Any("request", req))
 
 	cl, err := pproxy.Client(s.providerAddress)
 	if err != nil {
@@ -186,15 +187,16 @@ func (s *magmaServer) Update(ctx context.Context, req *magma.UpdateReq) (*magma.
 		return nil, status.Errorf(codes.Unknown, f, err)
 	}
 
-	log.Logger.Info("Magma: Handling Update successfully ended.")
-
+	s.metrics.UpdateDataUploadedMetric(req.GetSession().GetSessionId(), req.GetOctetsOut())
+	s.metrics.UpdateDataDownloadedMetric(req.GetSession().GetSessionId(), req.GetOctetsIn())
+	log.Logger.Debug("Magma: Handling Update successfully ended.")
 	return &magma.SessionResp{}, err
 }
 
 // Stop executes Magma.Update procedure.
 // NOTE: need to be modified.
 func (s magmaServer) Stop(ctx context.Context, req *magma.UpdateReq) (*magma.StopResp, error) {
-	log.Logger.Info("Magma: Got Stop request.", zap.Any("request", req))
+	log.Logger.Debug("Magma: Got Stop request.", zap.Any("request", req))
 
 	_, err := s.Update(ctx, req)
 	if err != nil {
@@ -202,7 +204,7 @@ func (s magmaServer) Stop(ctx context.Context, req *magma.UpdateReq) (*magma.Sto
 	}
 	// TODO implement magma sc function
 
-	log.Logger.Info("Magma: Handling Stop successfully ended.")
-
+	s.metrics.IncSessionStopped()
+	log.Logger.Debug("Magma: Handling Stop successfully ended.")
 	return &magma.StopResp{}, nil
 }
