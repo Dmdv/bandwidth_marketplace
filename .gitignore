@@ -5,3 +5,7 @@ docker.local/provider*/
 docker.local/magma/
 
 code/magma/log/
+
+code/integration-tests/magma
+code/integration-tests/consumer
+code/integration-tests/provider
