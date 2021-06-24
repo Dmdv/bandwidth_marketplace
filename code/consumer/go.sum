@@ -1,8 +1,8 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0 h1:eOI3/cP2VTU6uZLDYAoic+eyzzB9YyGmJ7eIjl8rOPg=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
-github.com/0chain/bandwidth_marketplace/code/core v0.0.0-20210618083925-b27969346f27 h1:T7+rQA1P7zdiGmoFtat9oO1qFFIo3fnp0mH6zGgKohA=
-github.com/0chain/bandwidth_marketplace/code/core v0.0.0-20210618083925-b27969346f27/go.mod h1:p0Vlk/e/fj52eyirmqRhswMSaY2iE7UegOjGMsZsh6k=
+github.com/0chain/bandwidth_marketplace/code/core v0.0.0-20210624093843-1bd3966df8a5 h1:OEyhKrhc0fa0qy9IhfAaUzA6+1uhtCM7L+8iHclGTqo=
+github.com/0chain/bandwidth_marketplace/code/core v0.0.0-20210624093843-1bd3966df8a5/go.mod h1:p0Vlk/e/fj52eyirmqRhswMSaY2iE7UegOjGMsZsh6k=
 github.com/0chain/bandwidth_marketplace/code/pb v0.0.0-20210611110922-edb653de27a2 h1:G9sg6hLd+UIFPjStc1zZp6tiWvB6KD7Rrb+wEKRs0Pk=
 github.com/0chain/bandwidth_marketplace/code/pb v0.0.0-20210611110922-edb653de27a2/go.mod h1:h14ab+YGQXD725gdI/Hj2MthgGqY3jLqCA4Ruu345Uw=
 github.com/0chain/gosdk v1.2.75 h1:793Bkdt/ruK9aM0q/H6VnKZpMHq4ZH9p5JiarzFN9Lk=
