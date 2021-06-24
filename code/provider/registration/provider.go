@@ -112,7 +112,7 @@ func register(cfg config.Terms) (string, error) {
 			Terms: provider.Terms{
 				Price:     cfg.Price,
 				Volume:    cfg.Volume,
-				ExpiredAt: t.Timestamp(time.Now().Add(cfg.ExpiredAt * time.Second).Unix()),
+				ExpiredAt: t.Timestamp(time.Now().Add(cfg.ExpiredAt * time.Minute).Unix()),
 			},
 			QoS: provider.QoS{
 				DownloadMBPS: cfg.QoS.DownloadMBPS,
