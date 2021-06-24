@@ -176,15 +176,20 @@ func (db Database) String() string {
 }
 
 // Validate checks provider.Terms for compliance with configuration of Terms.
-func (tCfg Terms) Validate(terms *provider.Terms) bool {
+func (tCfg Terms) Validate(terms *provider.ProviderTerms) error {
+	const errCode = "validate_terms"
+
 	switch {
 	case terms.Price > tCfg.MaxPrice:
+		return errors.NewError(errCode, "max price reached")
+
 	case terms.QoS.DownloadMBPS < tCfg.QoS.MinDownloadMBPS:
+		return errors.NewError(errCode, "min qos download speed reached")
+
 	case terms.QoS.UploadMBPS < tCfg.QoS.MinUploadMBPS:
+		return errors.NewError(errCode, "max qos download speed reached")
 
 	default:
-		return true
+		return nil
 	}
-
-	return false
 }

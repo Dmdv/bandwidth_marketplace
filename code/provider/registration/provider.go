@@ -8,6 +8,7 @@ import (
 	"github.com/0chain/bandwidth_marketplace/code/core/log"
 	"github.com/0chain/bandwidth_marketplace/code/core/node"
 	"github.com/0chain/bandwidth_marketplace/code/core/provider"
+	t "github.com/0chain/bandwidth_marketplace/code/core/time"
 	"github.com/0chain/bandwidth_marketplace/code/core/transaction"
 	"github.com/0chain/gosdk/zcncore"
 	"go.uber.org/zap"
@@ -107,8 +108,12 @@ func register(cfg config.Terms) (string, error) {
 
 	prov := provider.Provider{
 		ID: node.GetSelfNode().ID(),
-		Terms: provider.Terms{
-			Price: cfg.Price,
+		Terms: provider.ProviderTerms{
+			Terms: provider.Terms{
+				Price:     cfg.Price,
+				Volume:    cfg.Volume,
+				ExpiredAt: t.Timestamp(time.Now().Add(cfg.ExpiredAt * time.Second).Unix()),
+			},
 			QoS: provider.QoS{
 				DownloadMBPS: cfg.QoS.DownloadMBPS,
 				UploadMBPS:   cfg.QoS.UploadMBPS,

@@ -68,8 +68,8 @@ func pickProvider(req *consumer.NotifyNewProviderRequest, cfg config.Terms) (str
 		return "", status.Errorf(codes.Unknown, "responding terms of provider failed with err: %v", err)
 	}
 
-	if !cfg.Validate(terms) {
-		log.Logger.Error("Terms is invalid")
+	if err := cfg.Validate(terms); err != nil {
+		log.Logger.Error("Terms is invalid", zap.Any("terms", terms), zap.Error(err))
 
 		return "", status.Error(codes.InvalidArgument, "terms can not be picked cause of configured requirements")
 	}
@@ -84,11 +84,11 @@ func pickProvider(req *consumer.NotifyNewProviderRequest, cfg config.Terms) (str
 
 	log.Logger.Info("Picking provider ended successfully", zap.Any("acknowledgment", ackn))
 
-	return ackn.ID, nil
+	return ackn.SessionID, nil
 }
 
 // respondTerms responds provider.Terms from blockchain.
-func respondTerms(providerID string) (*provider.Terms, error) {
+func respondTerms(providerID string) (*provider.ProviderTerms, error) {
 	params := map[string]string{
 		"provider_id": providerID,
 	}
@@ -97,7 +97,7 @@ func respondTerms(providerID string) (*provider.Terms, error) {
 		return nil, err
 	}
 
-	terms := new(provider.Terms)
+	terms := new(provider.ProviderTerms)
 	err = json.Unmarshal(res, terms)
 	if err != nil {
 		return nil, err

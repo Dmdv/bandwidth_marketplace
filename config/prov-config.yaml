@@ -18,13 +18,18 @@ db:
   port: 5432
 
 logging:
-  level: "info"
+  level: "debug"
 
 # Use this section to configure terms of provider. Configuration is being used only while registration process.
 # If node already registered in blockchain, you should update terms manually using cli client.
 terms:
   # token per megabyte
   price: 1
+
+  volume: 20
+
+  # will be used as `expired_at`(in minutes) + current registration time
+  expired_at: 500
 
   qos:
     # megabits per second

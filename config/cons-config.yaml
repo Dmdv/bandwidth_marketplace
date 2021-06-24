@@ -18,7 +18,7 @@ db:
   port: 5432
 
 logging:
-  level: "info"
+  level: "debug"
 
 # Represents address of magma service.
 magma_address: "198.18.0.21:7051"
@@ -27,14 +27,14 @@ proxy:
   # Represents configuration which determines consumer's decision about accepting provider terms.
   terms:
     # token per MB
-    max_price: 5
+    max_price: 5000000
 
     qos:
       # megabits per second
-      min_download_bmps: 10
+      min_download_mbps: 0
 
       # megabits per second
-      min_upload_bmps: 10
+      min_upload_mbps: 0
 
 # in seconds
 grpc_server_timeout: 30

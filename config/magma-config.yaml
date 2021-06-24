@@ -3,7 +3,7 @@ port: 5081
 grpc_address: ":7051"
 
 logging:
-  level: "info"
+  level: "debug"
   dir: "/magma/log"
 
 handler:

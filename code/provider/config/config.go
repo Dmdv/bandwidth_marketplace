@@ -3,6 +3,7 @@ package config
 import (
 	"flag"
 	"os"
+	"time"
 
 	"github.com/0chain/bandwidth_marketplace/code/core/errors"
 	"gopkg.in/yaml.v2"
@@ -69,8 +70,10 @@ type (
 
 	// Terms represents quality of services options described in "terms" section of the config yaml file.
 	Terms struct {
-		Price int64 `yaml:"price"`
-		QoS   QoS   `yaml:"qos"`
+		Price     int64         `json:"price"`      // per byte
+		Volume    int64         `json:"volume"`     // in bytes
+		ExpiredAt time.Duration `json:"expired_at"` // valid till
+		QoS       QoS           `yaml:"qos"`
 	}
 
 	// QoS represents quality of services options described in "terms.qos" section of the config yaml file.
