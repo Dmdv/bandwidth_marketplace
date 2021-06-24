@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math"
 	"net"
 	"net/http"
 	"net/url"
@@ -12,9 +13,12 @@ import (
 	"github.com/0chain/bandwidth_marketplace/code/core/context"
 	"github.com/0chain/bandwidth_marketplace/code/core/crypto"
 	"github.com/0chain/bandwidth_marketplace/code/core/datastore"
+	"github.com/0chain/bandwidth_marketplace/code/core/errors"
 	"github.com/0chain/bandwidth_marketplace/code/core/limiter"
 	"github.com/0chain/bandwidth_marketplace/code/core/log"
 	"github.com/0chain/bandwidth_marketplace/code/core/node"
+	"github.com/0chain/bandwidth_marketplace/code/core/transaction"
+	"github.com/0chain/gosdk/zcncore"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
@@ -42,9 +46,46 @@ func main() {
 	registration.Setup(cfg, selfNode.GetWalletString())
 	registration.RegisterWithRetries(5)
 
+	pour()
+
 	server := createServer(cfg)
 	errMsg := server.ListenAndServe().Error()
 	log.Logger.Fatal(errMsg)
+}
+
+func pour() {
+	log.Logger.Debug("Start pouring wallet")
+	txn, err := transaction.NewTransactionEntity()
+	if err != nil {
+		errors.ExitErr("fail creating faucet transaction", err, 2)
+	}
+
+	const (
+		address  = "6dba10422e368813802877a85039d3985d96760ed844092319743fb3a76712d3"
+		funcName = "pour"
+	)
+
+	txnHash, err := txn.ExecuteSmartContract(address, funcName, "", math.MaxInt64)
+	if err != nil {
+		errors.ExitErr("fail executing pour faucet txn", err, 2)
+	}
+
+	_, err = transaction.VerifyTransaction(txnHash)
+	if err != nil {
+		errors.ExitErr("fail verifying pour faucet txn", err, 2)
+	}
+	log.Logger.Debug("Success pouring wallet")
+
+	err = zcncore.GetBalance(new(getBalanceCB))
+	if err != nil {
+		log.Logger.Error("Fail getBalance", zap.Error(err))
+	}
+}
+
+type getBalanceCB struct{}
+
+func (b *getBalanceCB) OnBalanceAvailable(status int, value int64, info string) {
+	log.Logger.Info("Get balance ended.", zap.Int("status", status), zap.Int64("value", value), zap.String("info", info))
 }
 
 func createSelfNode(cfg config.CommandLineConfig) *node.Node {

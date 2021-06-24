@@ -26,10 +26,10 @@ terms:
   # token per megabyte
   price: 1
 
-  volume: 20
+  volume: 1
 
   # will be used as `expired_at`(in minutes) + current registration time
-  expired_at: 500
+  expired_at: 8650 # 1 year
 
   qos:
     # megabits per second
