@@ -1,7 +1,6 @@
 package main
 
 import (
-	"math"
 	"net"
 	"net/http"
 	"net/url"
@@ -65,7 +64,7 @@ func pour() {
 		funcName = "pour"
 	)
 
-	txnHash, err := txn.ExecuteSmartContract(address, funcName, "", math.MaxInt64)
+	txnHash, err := txn.ExecuteSmartContract(address, funcName, "", 1000000000)
 	if err != nil {
 		errors.ExitErr("fail executing pour faucet txn", err, 2)
 	}
