@@ -70,9 +70,9 @@ type (
 
 	// Terms represents quality of services options described in "terms" section of the config yaml file.
 	Terms struct {
-		Price     int64         `json:"price"`      // per byte
-		Volume    int64         `json:"volume"`     // in bytes
-		ExpiredAt time.Duration `json:"expired_at"` // valid till
+		Price     int64         `yaml:"price"`      // per byte
+		Volume    int64         `yaml:"volume"`     // in bytes
+		ExpiredAt time.Duration `yaml:"expired_at"` // valid till
 		QoS       QoS           `yaml:"qos"`
 	}
 
