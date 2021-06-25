@@ -1,0 +1,86 @@
+name: Dockerize
+
+on:
+  workflow_dispatch:
+    inputs:
+      latest_tag:
+        description: 'type yes for building latest tag'
+        default: 'no'
+        required: true
+
+env:
+  CONSUMER_REGISTRY: ${{ secrets.CONSUMER_REGISTRY_DEV }}
+  PROVIDER_REGISTRY: ${{ secrets.PROVIDER_REGISTRY_DEV }}
+
+jobs:
+  dockerize_consumer:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Get the version
+      id: get_version
+      run: |
+        BRANCH=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g')
+        SHORT_SHA=$(echo $GITHUB_SHA | head -c 8)
+        echo ::set-output name=BRANCH::${BRANCH}
+        echo ::set-output name=VERSION::${BRANCH}-${SHORT_SHA} 
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+    - name: Build Consumer
+      run: |
+        docker build -t $CONSUMER_REGISTRY:$TAG -f "$DOCKERFILE_CONS" .
+        docker tag $CONSUMER_REGISTRY:$TAG $CONSUMER_REGISTRY:latest
+        docker push $CONSUMER_REGISTRY:$TAG
+      env:
+        TAG: ${{ steps.get_version.outputs.VERSION }}
+        DOCKERFILE_CONS: "docker.local/cons-dockerfile"
+
+    - name: Push Consumer
+      run: |
+        if [[ "$PUSH_LATEST" == "yes" ]]; then
+          docker push $CONSUMER_REGISTRY:latest
+        fi
+      env:
+        PUSH_LATEST: ${{ github.event.inputs.latest_tag }}
+
+  dockerize_provider:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Get the version
+      id: get_version
+      run: |
+        BRANCH=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g')
+        SHORT_SHA=$(echo $GITHUB_SHA | head -c 8)
+        echo ::set-output name=BRANCH::${BRANCH}
+        echo ::set-output name=VERSION::${BRANCH}-${SHORT_SHA}  
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+    - name: Build Provider
+      run: |
+        docker build -t $PROVIDER_REGISTRY:$TAG -f "$DOCKERFILE_PROV" .
+        docker tag $PROVIDER_REGISTRY:$TAG $PROVIDER_REGISTRY:latest
+        docker push $PROVIDER_REGISTRY:$TAG
+      env:
+        TAG: ${{ steps.get_version.outputs.VERSION }}
+        DOCKERFILE_PROV: "docker.local/prov-dockerfile"
+    
+    - name: Push Provider
+      run: |
+        if [[ "$PUSH_LATEST" == "yes" ]]; then
+          docker push $PROVIDER_REGISTRY:latest
+        fi
+      env:
+        PUSH_LATEST: ${{ github.event.inputs.latest_tag }}
