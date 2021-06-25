@@ -2,7 +2,9 @@ name: Dockerize
 
 on:
   push:
-    - gitactionsfix
+    branches:
+      - gitactionsfix
+
   workflow_dispatch:
     inputs:
       latest_tag:
