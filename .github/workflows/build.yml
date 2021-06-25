@@ -14,7 +14,7 @@ on:
 
 env:
   CONSUMER_REGISTRY: ${{ secrets.CONSUMER_REGISTRY_DEV }}
-  VALIDATOR_REGISTRY: ${{ secrets.PROVIDER_REGISTRY_DEV }}
+  PROVIDER_REGISTRY: ${{ secrets.PROVIDER_REGISTRY_DEV }}
 
 jobs:
   dockerize_consumer:
